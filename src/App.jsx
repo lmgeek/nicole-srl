@@ -38,7 +38,7 @@ function App() {
       <nav className="navbar">
         <div className="nav-container">
           <div className="logo" onClick={() => scrollToSection('home')}>
-            NICOLE SRL
+            <img src="/nicole_logo.png" alt="NICOLE SRL" />
           </div>
           <button className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)}>
             {menuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -267,7 +267,7 @@ function App() {
       <footer className="footer">
         <div className="container">
           <div className="footer-content">
-            <div className="footer-logo">NICOLE SRL</div>
+            <div className="footer-logo"><img src="/nicole_logo.png" alt="NICOLE SRL" /></div>
             <div className="footer-social">
               <a href="https://wa.me/393000000000" className="social-link" aria-label="WhatsApp">
                 <WhatsAppIcon />

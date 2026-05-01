@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Raleway:wght@300;400;500;600&display=swap');
 
 :root {
-  --primary: #1a1a1a;
+  --primary: #f4c1c0;
   --secondary: #f5f0eb;
   --accent: #c9a87c;
   --accent-dark: #a88a5c;
@@ -77,21 +77,37 @@ h1, h2, h3, h4 {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: nowrap;
 }
 
 .logo {
-  font-family: 'Playfair Display', serif;
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--primary);
   cursor: pointer;
-  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  width: fit-content;
+}
+
+.logo img {
+  width: auto;
+  height: 40px;
 }
 
 .nav-menu {
   display: flex;
   list-style: none;
-  gap: 32px;
+  gap: 20px;
+  flex-shrink: 1;
+}
+
+.nav-menu li {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  position: relative;
+  transition: color 0.3s;
+  letter-spacing: 1px;
+  white-space: nowrap;
 }
 
 .nav-menu li {
@@ -232,7 +248,7 @@ h1, h2, h3, h4 {
 .cta-button {
   display: inline-block;
   padding: 16px 40px;
-  background: var(--accent);
+  background: var(--primary);
   color: white;
   font-size: 14px;
   font-weight: 600;
@@ -245,9 +261,9 @@ h1, h2, h3, h4 {
 }
 
 .cta-button:hover {
-  background: var(--accent-dark);
+  background: #e0a5a4;
   transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(201, 168, 124, 0.3);
+  box-shadow: 0 10px 30px rgba(244, 193, 192, 0.3);
 }
 
 @keyframes fadeInUp {
@@ -605,7 +621,7 @@ h1, h2, h3, h4 {
 }
 
 .submit-button:hover {
-  background: var(--accent);
+  background: #e0a5a4;
 }
 
 .mappa {
@@ -638,6 +654,7 @@ h1, h2, h3, h4 {
 .footer {
   background: var(--primary);
   padding: 60px 0 30px;
+  color: #0e346d;
 }
 
 .footer-content {
@@ -648,11 +665,14 @@ h1, h2, h3, h4 {
 }
 
 .footer-logo {
-  font-family: 'Playfair Display', serif;
-  font-size: 24px;
-  font-weight: 700;
-  color: white;
-  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  width: fit-content;
+}
+
+.footer-logo img {
+  width: auto;
+  height: 40px;
 }
 
 .footer-social {
@@ -666,14 +686,15 @@ h1, h2, h3, h4 {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: white;
+  border: 1px solid rgba(14, 52, 109, 0.3);
+  color: #0e346d;
   transition: all 0.3s;
 }
 
 .social-link:hover {
-  background: var(--accent);
-  border-color: var(--accent);
+  background: #0e346d;
+  border-color: #0e346d;
+  color: white;
 }
 
 .footer-bottom {
@@ -683,7 +704,7 @@ h1, h2, h3, h4 {
 }
 
 .footer-bottom p {
-  color: rgba(255, 255, 255, 0.5);
+  color: #0e346d;
   font-size: 13px;
 }
 
