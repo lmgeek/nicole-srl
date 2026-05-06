@@ -5,7 +5,7 @@ import WhatsAppButton from "../components/WhatsAppButton";
 
 export default function ChiSiamo() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <Navbar />
 
       <div className="pt-28 pb-24 md:pb-32">
@@ -33,16 +33,18 @@ export default function ChiSiamo() {
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="aspect-[4/5] rounded-3xl overflow-hidden"
+               className="shadow-lg">
+                 <div className="aspect-[4/5] rounded-3xl overflow-hidden">
             >
 <img
    src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80"
    alt="Donna italiana in caffè veneziano con outfit elegante primaverile"
    className="w-full h-full object-cover"
 />
-            </motion.div>
+                 </div>
+               </motion.div>
 
-            <motion.div
+             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}

@@ -13,7 +13,7 @@ const STORE_INFO = [
 
 export default function Contatti() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <Navbar />
 
       <div className="pt-28 pb-24 md:pb-32">

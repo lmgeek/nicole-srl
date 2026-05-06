@@ -10,7 +10,7 @@ import BannerCTA from "../components/home/BannerCTA";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <Navbar />
       <HeroSection />
       <CategoriesSection />

@@ -25,7 +25,7 @@ export default function Collezione() {
     : PRODUCTS.filter((p) => p.category === activeFilter);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <Navbar />
 
       <div className="pt-28 pb-24 md:pb-32">
@@ -71,7 +71,8 @@ export default function Collezione() {
                 transition={{ delay: index * 0.05 }}
                 className="group cursor-pointer"
               >
-                <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-card mb-4">
+                 <div className="shadow-lg">
+                   <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-card mb-4">
                   <img
                     src={product.image}
                     alt={product.alt}
@@ -80,8 +81,9 @@ export default function Collezione() {
                   <span className="absolute top-3 left-3 bg-primary/80 text-primary-foreground font-body text-[9px] tracking-wider uppercase px-2.5 py-1 rounded-full">
                     {product.category}
                   </span>
-                </div>
-                <h3 className="font-heading text-base md:text-lg font-medium text-foreground mb-1">
+                   </div>
+                 </div>
+                 <h3 className="font-heading text-base md:text-lg font-medium text-foreground mb-1">
                   {product.name}
                 </h3>
                 <p className="font-body text-sm text-foreground/60">{product.price}</p>
