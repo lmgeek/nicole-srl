@@ -16,7 +16,7 @@ const FacebookIcon = () => (
 )
 
 const WhatsAppIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.195.194 1.666.116.471-.074 1.608-.695 1.835-1.388.227-.692.227-1.284.153-1.399-.074-.114-.27-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
   </svg>
 )
@@ -38,8 +38,8 @@ function App() {
       <nav className="navbar">
         <div className="nav-container">
           <div className="logo" onClick={() => scrollToSection('home')}>
-            <img src="/nicole_logo.png" alt="NICOLE SRL" />
-          </div>
+             <img src="/nicole_logo.png" alt="NICOLE TREND SHOP" />
+           </div>
           <button className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)}>
             {menuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -53,32 +53,33 @@ function App() {
         </div>
       </nav>
 
-      <section id="home" className="hero">
-        <div className="hero-bg" style={{backgroundImage: 'url(https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=1920&q=80)'}}></div>
-        <div className="hero-overlay"></div>
-        <div className="hero-content">
-          <h1>Eleganza e Stile a Terracina</h1>
-          <p>Scopri le ultime tendenze della moda nel cuore di Terracina</p>
-          <button className="cta-button" onClick={() => scrollToSection('collezioni')}>
-            Scopri le Collezioni
-          </button>
-        </div>
-      </section>
+       <section id="home" className="hero">
+         <div className="hero-bg" style={{backgroundImage: 'url(https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=1920&q=80)'}}></div>
+         <div className="hero-overlay"></div>
+         <div className="hero-content">
+           <h1>NICOLE TREND SHOP</h1>
+           <p className="slogan">abbigliamento e accessori</p>
+           <p>Scopri le ultime tendenze della moda nel cuore di Terracina</p>
+           <button className="cta-button" onClick={() => scrollToSection('collezioni')}>
+             Scopri le Collezioni
+           </button>
+         </div>
+       </section>
 
       <section id="chi-siamo" className="chi-siamo">
         <div className="container">
           <div className="section-header">
             <span className="section-subtitle">La Nostra Storia</span>
-            <h2>Benvenuti da NICOLE SRL</h2>
+             <h2>Benvenuti da NICOLE TREND SHOP</h2>
           </div>
           <div className="chi-siamo-grid">
-            <div className="chi-siamo-image">
-              <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80" alt="Negozio NICOLE SRL" />
-              <div className="image-frame"></div>
-            </div>
+             <div className="chi-siamo-image">
+               <img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=800&q=80" alt="Calzature femminili NICOLE SRL" />
+               <div className="image-frame"></div>
+             </div>
             <div className="chi-siamo-text">
               <p>
-                Da più di vent'anni NICOLE SRL rappresenta il punto di riferimento per la moda a Terracina. 
+                 Da più di vent'anni NICOLE TREND SHOP rappresenta il punto di riferimento per la moda a Terracina.
                 La nostra passione per l'eleganza e la qualità ci ha permesso di costruire un rapporto solido 
                 con una clientela fedele che ci considera il proprio stylist di fiducia.
               </p>
@@ -161,36 +162,36 @@ function App() {
             <span className="section-subtitle">Le Nostre Proposte</span>
             <h2>Le Collezioni</h2>
           </div>
-          <div className="collezioni-grid">
-            <div className="collezione-card donna">
-              <img src="https://images.unsplash.com/photo-1485968579580-b6d095142e6e?w=600&q=80" alt="Donna" />
-              <div className="collezione-overlay">
-                <h3>Donna</h3>
-                <p>Eleganza e femminilità per ogni occasione</p>
-              </div>
-            </div>
-            <div className="collezione-card uomo">
-              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80" alt="Uomo" />
-              <div className="collezione-overlay">
-                <h3>Uomo</h3>
-                <p>Classico e moderno per l'uomo sofisticato</p>
-              </div>
-            </div>
-            <div className="collezione-card accessori">
-              <img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600&q=80" alt="Accessori" />
-              <div className="collezione-overlay">
-                <h3>Accessori</h3>
-                <p>Borse, gioielli e dettagli che fanno la differenza</p>
-              </div>
-            </div>
-            <div className="collezione-card novita">
-              <img src="https://images.unsplash.com/photo-1558171813-4c088753af8f?w=600&q=80" alt="Novità" />
-              <div className="collezione-overlay">
-                <h3>Novità</h3>
-                <p>Le ultime tendenze appena arrivate</p>
-              </div>
-            </div>
-          </div>
+           <div className="collezioni-grid">
+             <div className="collezione-card donna">
+               <img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=600&q=80" alt="Calzature Donna" />
+               <div className="collezione-overlay">
+                 <h3>Calzature Donna</h3>
+                 <p>Eleganza e femminilità per ogni occasione</p>
+               </div>
+             </div>
+             <div className="collezione-card uomo">
+               <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80" alt="Sneakers Donna" />
+               <div className="collezione-overlay">
+                 <h3>Sneakers</h3>
+                 <p>Comfort e stile per il giorno</p>
+               </div>
+             </div>
+             <div className="collezione-card accessori">
+               <img src="https://images.unsplash.com/photo-1605408499391-63665067dfad?w=600&q=80" alt="Sandali Donna" />
+               <div className="collezione-overlay">
+                 <h3>Sandali</h3>
+                 <p>Leggerezza ed eleganza estiva</p>
+               </div>
+             </div>
+             <div className="collezione-card novita">
+               <img src="https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=600&q=80" alt="Novità Calzature" />
+               <div className="collezione-overlay">
+                 <h3>Novità</h3>
+                 <p>Le ultime tendenze appena arrivate</p>
+               </div>
+             </div>
+           </div>
         </div>
       </section>
 
@@ -202,20 +203,20 @@ function App() {
           </div>
           <div className="contatti-grid">
             <div className="contatti-info">
-              <div className="info-item">
-                <MapPin className="info-icon" />
-                <div>
-                  <h4>Indirizzo</h4>
-                  <p>Terracina, Latina<br/>Lazio, Italia</p>
-                </div>
-              </div>
-              <div className="info-item">
-                <Phone className="info-icon" />
-                <div>
-                  <h4>Telefono</h4>
-                  <p>+39 0773 70XXXX</p>
-                </div>
-              </div>
+                 <div className="info-item">
+                 <MapPin className="info-icon" />
+                 <div>
+                   <h4>Indirizzo</h4>
+                   <p>Via Don Torello, 23 - Latina<br/>Via Dema 15/17 - Terracina</p>
+                 </div>
+               </div>
+               <div className="info-item">
+                 <Phone className="info-icon" />
+                 <div>
+                   <h4>Telefono</h4>
+                   <p>0773280894</p>
+                 </div>
+               </div>
               <div className="info-item">
                 <Mail className="info-icon" />
                 <div>
@@ -264,24 +265,25 @@ function App() {
         </div>
       </section>
 
-      <footer className="footer">
+       <a href="https://wa.me/393000000000" className="whatsapp-float" aria-label="WhatsApp">
+         <WhatsAppIcon />
+       </a>
+
+       <footer className="footer">
         <div className="container">
           <div className="footer-content">
-            <div className="footer-logo"><img src="/nicole_logo.png" alt="NICOLE SRL" /></div>
-            <div className="footer-social">
-              <a href="https://wa.me/393000000000" className="social-link" aria-label="WhatsApp">
-                <WhatsAppIcon />
-              </a>
-              <a href="#" className="social-link" aria-label="Instagram">
-                <InstagramIcon />
-              </a>
-              <a href="#" className="social-link" aria-label="Facebook">
-                <FacebookIcon />
-              </a>
-            </div>
+             <div className="footer-logo"><img src="/nicole_logo.png" alt="NICOLE TREND SHOP" /></div>
+             <div className="footer-social">
+               <a href="https://instagram.com/nicoletrend.shop" className="social-link" aria-label="Instagram">
+                 <InstagramIcon />
+               </a>
+               <a href="https://facebook.com/NicoleTrendShop" className="social-link" aria-label="Facebook">
+                 <FacebookIcon />
+               </a>
+             </div>
           </div>
           <div className="footer-bottom">
-            <p>&copy; 2026 NICOLE SRL. Tutti i diritti riservati.</p>
+             <p>&copy; 2026 NICOLE TREND SHOP. Tutti i diritti riservati.</p>
           </div>
         </div>
       </footer>
