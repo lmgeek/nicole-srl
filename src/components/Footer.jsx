@@ -13,7 +13,7 @@ export default function Footer() {
               Abbigliamento e Accessori
             </p>
             <p className="font-body text-sm opacity-70 leading-relaxed max-w-xs">
-              L'eleganza italiana ai tuoi piedi. Scopri la nostra selezione di calzature e accessori pensati per la donna moderna.
+              L'eleganza italiana per ogni occasione. Scopri la nostra selezione di abbigliamento e accessori pensati per la donna moderna.
             </p>
           </div>
 

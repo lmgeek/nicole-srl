@@ -4,17 +4,17 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import WhatsAppButton from "../components/WhatsAppButton";
 
-const CATEGORIES = ["Tutto", "Tacchi", "Sandali", "Stivali", "Sneakers", "Ballerine", "Accessori"];
+const CATEGORIES = ["Tutto", "Vestiti", "Bluse", "Gonne", "Pantaloni", "Giacche", "Accessori"];
 
 const PRODUCTS = [
-  { name: "Sandalo Athena", price: "€ 89,00", category: "Sandali", image: "https://picsum.photos/seed/fa483cd14/600/800", alt: "Sandalo Athena in pelle dorata" },
-  { name: "Tacco Valentina", price: "€ 129,00", category: "Tacchi", image: "https://picsum.photos/seed/36af1a70c/600/800", alt: "Tacco Valentina in pelle rosa" },
-  { name: "Sneaker Luna", price: "€ 79,00", category: "Sneakers", image: "https://picsum.photos/seed/66807b05b/600/800", alt: "Sneaker bianca Luna in pelle" },
-  { name: "Stivaletto Roma", price: "€ 159,00", category: "Stivali", image: "https://picsum.photos/seed/63d8a4e4a/600/800", alt: "Stivaletto Roma in pelle cognac" },
-  { name: "Ballerina Sofia", price: "€ 69,00", category: "Ballerine", image: "https://picsum.photos/seed/c3e400616/600/800", alt: "Ballerina Sofia in pelle nude" },
-  { name: "Pochette Sera", price: "€ 59,00", category: "Accessori", image: "https://picsum.photos/seed/297c8416e/600/800", alt: "Pochette Sera in pelle rosa antico" },
-  { name: "Zeppa Estate", price: "€ 99,00", category: "Sandali", image: "https://picsum.photos/seed/1474a42a1/600/800", alt: "Espadrille con zeppa in jute e pelle" },
-  { name: "Tacco Firenze", price: "€ 139,00", category: "Tacchi", image: "https://picsum.photos/seed/36af1a70c/600/800", alt: "Tacco elegante Firenze" },
+  { name: "Vestito Elegante Sofia", price: "€ 129,00", category: "Vestiti", image: "/images/products/dress-1.jpg", alt: "Vestito elegante Sofia in seta blu" },
+  { name: "Blusa Valentina", price: "€ 79,00", category: "Bluse", image: "/images/products/blouse-1.jpg", alt: "Blusa Valentina in seta rosa" },
+  { name: "Gonna Luna", price: "€ 89,00", category: "Gonne", image: "/images/products/skirt-1.jpg", alt: "Gonna Luna in tessuto leggero" },
+  { name: "Pantaloni Roma", price: "€ 99,00", category: "Pantaloni", image: "/images/products/pants-1.jpg", alt: "Pantaloni Roma in cotone" },
+  { name: "Giacca Athena", price: "€ 159,00", category: "Giacche", image: "/images/products/jacket-1.jpg", alt: "Giacca Athena in lana" },
+  { name: "Borsa Sera", price: "€ 69,00", category: "Accessori", image: "/images/products/bag-1.jpg", alt: "Borsa Sera in pelle rosa antico" },
+  { name: "Vestito Estate", price: "€ 119,00", category: "Vestiti", image: "/images/products/dress-2.jpg", alt: "Vestito Estate in cotone leggero" },
+  { name: "Blusa Firenze", price: "€ 89,00", category: "Bluse", image: "/images/products/blouse-2.jpg", alt: "Blusa Firenze in chiffon" },
 ];
 
 export default function Collezione() {

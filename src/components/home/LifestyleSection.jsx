@@ -14,10 +14,10 @@ export default function LifestyleSection() {
               className="aspect-[3/4] rounded-2xl overflow-hidden"
             >
               <img
-                src="https://media.base44.com/images/public/69fa8bb77746872ce1649864/e02d0b9cc_generated_a27049c2.png"
-                alt="Donna elegante che cammina per una piazza italiana al tramonto"
-                className="w-full h-full object-cover"
-              />
+                 src="/images/products/lifestyle-1.jpg"
+                 alt="Donna elegante con vestito che cammina per una piazza italiana al tramonto"
+                 className="w-full h-full object-cover"
+               />
             </motion.div>
             <motion.div
               initial={{ opacity: 0, x: 20 }}
@@ -27,10 +27,10 @@ export default function LifestyleSection() {
               className="aspect-[3/4] rounded-2xl overflow-hidden mt-8"
             >
               <img
-                src="https://media.base44.com/images/public/69fa8bb77746872ce1649864/4ce767324_generated_50ec7120.png"
-                alt="Borsa e scarpe in pelle caramello su marmo con luce dorata"
-                className="w-full h-full object-cover"
-              />
+                 src="/images/products/lifestyle-2.jpg"
+                 alt="Borsa e outfit in tessuto caramello su marmo con luce dorata"
+                 className="w-full h-full object-cover"
+               />
             </motion.div>
           </div>
 

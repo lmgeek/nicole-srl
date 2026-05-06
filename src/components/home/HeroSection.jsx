@@ -6,15 +6,14 @@ export default function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
       {/* Background Image */}
-      <div className="absolute inset-0">
-        <img
-          src="https://media.base44.com/images/public/69fa8bb77746872ce1649864/4532eca80_generated_464f8b13.png"
-          alt="Scarpe eleganti da donna su strada italiana al tramonto"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/60 to-transparent" />
-        <div className="absolute inset-0" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='30' cy='30' r='3' fill='%23000' fill-opacity='0.4'/%3E%3C/svg%3E\")" }} />
-      </div>
+          <div className="absolute inset-0">
+         <img
+           src="/images/products/hero.jpg"
+           alt="Donna con outfit femminile elegante in tonalita calde"
+           className="w-full h-full object-cover"
+         />
+         <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/60 to-transparent" />
+       </div>
 
       {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 w-full pt-20">
@@ -47,7 +46,7 @@ export default function HeroSection() {
             transition={{ delay: 0.6 }}
             className="font-body text-base md:text-lg text-foreground/70 leading-relaxed max-w-md mb-10"
           >
-            Scopri la collezione esclusiva di calzature e accessori firmati Nicole Trend Shop. Stile italiano, eleganza senza tempo.
+            Scopri la collezione esclusiva di abbigliamento e accessori firmati Nicole Trend Shop. Stile italiano, eleganza senza tempo.
           </motion.p>
 
           <motion.div

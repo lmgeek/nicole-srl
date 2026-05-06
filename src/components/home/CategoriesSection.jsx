@@ -3,28 +3,28 @@ import { Link } from "react-router-dom";
 
 const categories = [
   {
-    name: "Tacchi",
+    name: "Vestiti",
     subtitle: "Eleganza classica",
-    image: "https://media.base44.com/images/public/69fa8bb77746872ce1649864/36af1a70c_generated_60b2ae0e.png",
-    alt: "Scarpa col tacco in pelle rosa su sfondo terracotta"
+    image: "/images/products/dress-1.jpg",
+    alt: "Vestito elegante in seta rosa su sfondo terracotta"
   },
   {
-    name: "Stivali",
+    name: "Bluse",
     subtitle: "Stile audace",
-    image: "https://media.base44.com/images/public/69fa8bb77746872ce1649864/63d8a4e4a_generated_ea3c96ee.png",
-    alt: "Stivaletto in pelle cognac su superficie di marmo"
+    image: "/images/products/blouse-1.jpg",
+    alt: "Blusa in seta su superficie di marmo"
   },
   {
-    name: "Sandali",
+    name: "Gonne",
     subtitle: "Freschezza estiva",
-    image: "https://media.base44.com/images/public/69fa8bb77746872ce1649864/fa483cd14_generated_01c797d3.png",
-    alt: "Sandalo flat in pelle dorata su tessuto di lino"
+    image: "/images/products/skirt-1.jpg",
+    alt: "Gonna estiva in cotone su tessuto di lino"
   },
   {
-    name: "Zeppe",
+    name: "Giacche",
     subtitle: "Comfort e stile",
-    image: "https://media.base44.com/images/public/69fa8bb77746872ce1649864/1474a42a1_generated_87dece0d.png",
-    alt: "Espadrille con zeppa in juta e pelle crema"
+    image: "/images/products/jacket-1.jpg",
+    alt: "Giacca in lana crema con dettagli eleganti"
   },
 ];
 

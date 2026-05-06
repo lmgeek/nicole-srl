@@ -33,16 +33,16 @@ export default function ChiSiamo() {
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-               className="shadow-lg">
-                 <div className="aspect-[4/5] rounded-3xl overflow-hidden">
+              className="shadow-lg"
             >
-<img
-   src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80"
-   alt="Donna italiana in caffè veneziano con outfit elegante primaverile"
-   className="w-full h-full object-cover"
-/>
-                 </div>
-               </motion.div>
+              <div className="aspect-[4/5] rounded-3xl overflow-hidden">
+                <img
+                  src="/images/products/lifestyle-1.jpg"
+                  alt="Donna italiana in boutique con outfit elegante primaverile"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </motion.div>
 
              <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -64,7 +64,7 @@ export default function ChiSiamo() {
                   Qualità Senza Compromessi
                 </h3>
                 <p className="font-body text-base text-foreground/70 leading-relaxed">
-                  Collaboriamo con i migliori artigiani per portarti calzature e accessori che combinano materiali pregiati con un design contemporaneo.
+                  Collaboriamo con i migliori artigiani per portarti abbigliamento e accessori che combinano materiali pregiati con un design contemporaneo.
                 </p>
               </div>
 

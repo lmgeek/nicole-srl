@@ -3,28 +3,28 @@ import { Instagram } from "lucide-react";
 
 const instagramImages = [
   {
-    src: "https://media.base44.com/images/public/69fa8bb77746872ce1649864/36af1a70c_generated_60b2ae0e.png",
-    alt: "Tacco elegante rosa su sfondo terracotta",
+    src: "/images/products/dress-2.jpg",
+    alt: "Donna elegante con vestito estivo in piazza",
   },
   {
-    src: "https://media.base44.com/images/public/69fa8bb77746872ce1649864/e02d0b9cc_generated_a27049c2.png",
-    alt: "Donna elegante con scarpe italiane in piazza",
+    src: "/images/products/blouse-2.jpg",
+    alt: "Donna con blusa elegante in caffè italiano",
   },
   {
-    src: "https://media.base44.com/images/public/69fa8bb77746872ce1649864/fa483cd14_generated_01c797d3.png",
-    alt: "Sandali dorati su lino naturale",
+    src: "/images/products/jacket-1.jpg",
+    alt: "Look casual chic con giacca e gonne",
   },
   {
-    src: "https://media.base44.com/images/public/69fa8bb77746872ce1649864/82e4fa9b8_generated_f7e47174.png",
-    alt: "Donna seduta su gradini di marmo con sandali",
+    src: "/images/products/bag-2.jpg",
+    alt: "Donna seduta su gradini di marmo con borsa",
   },
   {
-    src: "https://media.base44.com/images/public/69fa8bb77746872ce1649864/297c8416e_generated_ad44a7a4.png",
-    alt: "Pochette in pelle rosa antico",
+    src: "/images/products/pants-1.jpg",
+    alt: "Borsa elegante in pelle rosa antico",
   },
   {
-    src: "https://media.base44.com/images/public/69fa8bb77746872ce1649864/66807b05b_generated_01207e77.png",
-    alt: "Sneakers bianche in pelle pregiata",
+    src: "/images/products/dress-1.jpg",
+    alt: "Outfit completo estivo in cotone pregiato",
   },
 ];
 
