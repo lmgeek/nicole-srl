@@ -8,7 +8,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {/* Brand */}
           <div>
-            <img src="/src/images/nicole_logo_w.png" alt="Nicole Trend Shop" className="h-20 w-auto mb-4" />
+            <img src="/images/nicole_logo_w.png" alt="Nicole Trend Shop" className="h-20 w-auto mb-4" />
             <p className="font-heading text-sm italic opacity-80 tracking-widest uppercase mb-6">
               Abbigliamento e Accessori
             </p>
