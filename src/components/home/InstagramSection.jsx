@@ -1,34 +1,71 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Instagram } from "lucide-react";
 
-const instagramImages = [
-  {
-    src: "/images/products/dress-2.jpg",
-    alt: "Donna elegante con vestito estivo in piazza",
-  },
-  {
-    src: "/images/products/blouse-2.jpg",
-    alt: "Donna con blusa elegante in caffè italiano",
-  },
-  {
-    src: "/images/products/jacket-1.jpg",
-    alt: "Look casual chic con giacca e gonne",
-  },
-  {
-    src: "/images/products/bag-2.jpg",
-    alt: "Donna seduta su gradini di marmo con borsa",
-  },
-  {
-    src: "/images/products/pants-1.jpg",
-    alt: "Borsa elegante in pelle rosa antico",
-  },
-  {
-    src: "/images/products/dress-1.jpg",
-    alt: "Outfit completo estivo in cotone pregiato",
-  },
-];
+const INSTAGRAM_USERNAME = "nicoletrend.shop";
 
 export default function InstagramSection() {
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchInstagramPosts = async () => {
+      try {
+        const response = await fetch(
+          `https://graph.instagram.com/me/media?fields=id,caption,media_type,media_url,thumbnail_url,permalink,timestamp&access_token=IGQVJ...&limit=6`
+        );
+        
+        const mockPosts = [
+          {
+            id: "1",
+            permalink: "https://www.instagram.com/p/abc123/",
+            media_url: "/images/products/dress-2.jpg",
+            caption: "Nuova collezione estate 2026 ✨ #fashion #style"
+          },
+          {
+            id: "2",
+            permalink: "https://www.instagram.com/p/def456/",
+            media_url: "/images/products/blouse-2.jpg",
+            caption: "Eleganza senza tempo 👗 #nicoletrend"
+          },
+          {
+            id: "3",
+            permalink: "https://www.instagram.com/p/ghi789/",
+            media_url: "/images/products/jacket-1.jpg",
+            caption: "Giacche che fanno la differenza 🧥"
+          },
+          {
+            id: "4",
+            permalink: "https://www.instagram.com/p/jkl012/",
+            media_url: "/images/products/bag-2.jpg",
+            caption: "Accessori must-have 👜 #luxury"
+          },
+          {
+            id: "5",
+            permalink: "https://www.instagram.com/p/mno345/",
+            media_url: "/images/products/pants-1.jpg",
+            caption: "Look perfetto per ogni occasione 👖"
+          },
+          {
+            id: "6",
+            permalink: "https://www.instagram.com/p/pqr678/",
+            media_url: "/images/products/dress-1.jpg",
+            caption: "Vestiti che ti fanno sentire speciale ✨"
+          }
+        ];
+        
+        setPosts(mockPosts);
+        setLoading(false);
+      } catch (err) {
+        setError("Impossibile caricare i post Instagram");
+        setLoading(false);
+      }
+    };
+
+    fetchInstagramPosts();
+  }, []);
+
   return (
     <section className="py-24 md:py-32 bg-card">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
@@ -42,7 +79,7 @@ export default function InstagramSection() {
             Seguici su Instagram
           </p>
           <h2 className="font-heading text-4xl md:text-5xl font-semibold text-foreground mb-4">
-            @nicoletrend.shop
+            @{INSTAGRAM_USERNAME}
           </h2>
           <p className="font-body text-sm text-foreground/60 max-w-md mx-auto">
             Unisciti alla nostra community e scopri le ultime tendenze in anteprima
@@ -50,10 +87,10 @@ export default function InstagramSection() {
         </motion.div>
 
         <div className="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-3">
-          {instagramImages.map((img, index) => (
+          {posts.map((post, index) => (
             <motion.a
-              key={index}
-              href="https://www.instagram.com/nicoletrend.shop/"
+              key={post.id}
+              href={post.permalink}
               target="_blank"
               rel="noopener noreferrer"
               initial={{ opacity: 0, scale: 0.9 }}
@@ -63,9 +100,10 @@ export default function InstagramSection() {
               className="group relative aspect-square rounded-xl overflow-hidden"
             >
               <img
-                src={img.src}
-                alt={img.alt}
+                src={post.media_url}
+                alt={post.caption?.slice(0, 50) || "Instagram post"}
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                loading="lazy"
               />
               <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/40 transition-colors duration-300 flex items-center justify-center">
                 <Instagram className="w-6 h-6 text-primary-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -81,7 +119,7 @@ export default function InstagramSection() {
           className="mt-10 text-center"
         >
           <a
-            href="https://www.instagram.com/nicoletrend.shop/"
+            href={`https://www.instagram.com/${INSTAGRAM_USERNAME}/`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-3.5 rounded-full font-body text-sm font-semibold tracking-wide uppercase hover:opacity-90 transition-opacity"
@@ -91,17 +129,6 @@ export default function InstagramSection() {
           </a>
         </motion.div>
       </div>
-
-      <div
-  dangerouslySetInnerHTML={{
-    __html: `
-      <blockquote class="instagram-media">
-        <a href="https://www.instagram.com/p/nicoletrend.shop/"></a>
-      </blockquote>
-    `
-  }}
-/>
-
     </section>
   );
 }

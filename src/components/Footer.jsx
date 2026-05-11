@@ -8,11 +8,11 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {/* Brand */}
           <div>
-            <img src="/images/nicole_logo_w.png" alt="Nicole Trend Shop" className="h-20 w-auto mb-4" />
-            <p className="font-heading text-sm italic opacity-80 tracking-widest uppercase mb-6">
+            <img src="/images/nicole_logo_w.png" alt="Nicole Trend Shop" className="h-20 w-auto" />
+            <p className="font-heading text-sm italic opacity-80 tracking-widest uppercase">
               Abbigliamento e Accessori
             </p>
-            <p className="font-body text-sm opacity-70 leading-relaxed max-w-xs">
+            <p className="font-body text-sm opacity-70 leading-relaxed max-w-xs mt-6">
               L'eleganza italiana per ogni occasione. Scopri la nostra selezione di abbigliamento e accessori pensati per la donna moderna.
             </p>
           </div>
@@ -25,6 +25,9 @@ export default function Footer() {
               <Link to="/collezione" className="font-body text-sm opacity-70 hover:opacity-100 transition-opacity">Collezione</Link>
               <Link to="/chi-siamo" className="font-body text-sm opacity-70 hover:opacity-100 transition-opacity">Chi Siamo</Link>
               <Link to="/contatti" className="font-body text-sm opacity-70 hover:opacity-100 transition-opacity">Contatti</Link>
+              <Link to="/spedizioni-resi" className="font-body text-sm opacity-70 hover:opacity-100 transition-opacity">Spedizioni e Resi</Link>
+              <Link to="/modalita-pagamento" className="font-body text-sm opacity-70 hover:opacity-100 transition-opacity">Modalità di Pagamento</Link>
+              <Link to="/privacy-policy" className="font-body text-sm opacity-70 hover:opacity-100 transition-opacity">Privacy Policy</Link>
             </div>
           </div>
 

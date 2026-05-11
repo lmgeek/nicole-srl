@@ -19,14 +19,46 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const checkUserAuth = useCallback(async () => {
+    if (typeof window !== 'undefined') {
+      const mockUser = localStorage.getItem('mock_admin_user');
+      if (mockUser) {
+        try {
+          const userData = JSON.parse(mockUser);
+          setUser(userData);
+          setIsAuthenticated(true);
+          return;
+        } catch (e) {
+          localStorage.removeItem('mock_admin_user');
+          localStorage.removeItem('mock_admin_logged_in');
+        }
+      }
+    }
     setIsAuthenticated(false);
     setUser(null);
+  }, []);
+
+  const login = useCallback((username, password) => {
+    if (username === 'admin' && password === 'Nicol3123!Admin') {
+      const userData = { id: 1, username: 'admin', role: 'admin' };
+      setUser(userData);
+      setIsAuthenticated(true);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('mock_admin_logged_in', 'true');
+        localStorage.setItem('mock_admin_user', JSON.stringify(userData));
+      }
+      return true;
+    }
+    return false;
   }, []);
 
   const logout = useCallback((shouldRedirect = true) => {
     setUser(null);
     setIsAuthenticated(false);
     clearStoredTokens();
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('mock_admin_logged_in');
+      localStorage.removeItem('mock_admin_user');
+    }
     if (shouldRedirect && typeof window !== 'undefined') {
       window.location.href = '/';
     }
@@ -34,7 +66,7 @@ export const AuthProvider = ({ children }) => {
 
   const navigateToLogin = useCallback(() => {
     if (typeof window !== 'undefined') {
-      window.location.href = '/';
+      window.location.href = '/login';
     }
   }, []);
 
@@ -47,6 +79,7 @@ export const AuthProvider = ({ children }) => {
       authError,
       appPublicSettings: null,
       authChecked: true,
+      login,
       logout,
       navigateToLogin,
       checkUserAuth,

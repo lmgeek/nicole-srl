@@ -41,17 +41,14 @@ export default function LifestyleSection() {
             viewport={{ once: true }}
             className="lg:pl-12"
           >
-            <p className="font-body text-xs tracking-[0.3em] uppercase text-foreground/50 mb-3">
+            {/* <p className="font-body text-xs tracking-[0.3em] uppercase text-foreground/50 mb-3">
               La Nostra Filosofia
             </p>
             <h2 className="font-heading text-4xl md:text-5xl font-semibold text-foreground leading-tight mb-8">
               Lo Stile È<br /><span className="italic font-light">Un'Attitudine</span>
-            </h2>
+            </h2> */}
             <p className="font-body text-base text-foreground/70 leading-relaxed mb-6 max-w-lg">
-              Da Nicole Trend Shop, ogni pezzo viene selezionato con cura per offrirti il meglio della moda italiana. Crediamo che l'eleganza non sia solo ciò che indossi, ma come lo indossi.
-            </p>
-            <p className="font-body text-base text-foreground/70 leading-relaxed max-w-lg">
-              Le nostre collezioni combinano artigianalità e tendenze contemporanee, per una donna che non segue la moda — la definisce.
+            Da Nicole Trend Shop crediamo che ogni donna debba sentirsi bella, sicura e libera di esprimere il proprio stile. Selezioniamo con passione capi moderni, femminili e versatili, pensati per accompagnare ogni momento della giornata, ogni occasione con eleganza e personalità. La nostra filosofia unisce tendenza, qualità e attenzione ai dettagli, offrendo un’esperienza di shopping autentica, curata e sempre vicina alle esigenze di ogni cliente.
             </p>
           </motion.div>
         </div>
