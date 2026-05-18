@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 
 const up = async (models) => {
-  const { User, Category, Product, Client, Sale } = models;
+  const { User, Category, Product, Client, Sale, HeroSlide } = models;
 
   const userCount = await User.countDocuments();
   if (userCount === 0) {
@@ -76,6 +76,23 @@ const up = async (models) => {
     ];
     await Sale.insertMany(sales);
     console.log('  ✅ Ventas insertadas');
+  }
+
+  if (HeroSlide) {
+    const slideCount = await HeroSlide.countDocuments();
+    if (slideCount === 0) {
+      const products = await Product.find().limit(3);
+      const slides = products.map((p, i) => ({
+        type: 'product',
+        product: p._id,
+        enabled: true,
+        order: i,
+      }));
+      if (slides.length > 0) {
+        await HeroSlide.insertMany(slides);
+        console.log(`  ✅ ${slides.length} Hero Slide create`);
+      }
+    }
   }
 };
 

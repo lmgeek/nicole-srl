@@ -9,6 +9,8 @@ import ClientesList from './pages/ClientesList';
 import VentasList from './pages/VentasList';
 import CategoryList from './pages/CategoryList';
 import CategoryForm from './pages/CategoryForm';
+import HeroSlideList from './pages/HeroSlideList';
+import HeroSlideForm from './pages/HeroSlideForm';
 
 const RequireAuth = ({ children }) => {
   const { isAuthenticated, isLoadingAuth } = useAuth();
@@ -44,6 +46,9 @@ const AdminRoutes = () => {
           <Route path="categorie" element={<CategoryList />} />
           <Route path="categorie/nuovo" element={<CategoryForm />} />
           <Route path="categorie/:id/modifica" element={<CategoryForm />} />
+          <Route path="hero" element={<HeroSlideList />} />
+          <Route path="hero/nuovo" element={<HeroSlideForm />} />
+          <Route path="hero/:id/modifica" element={<HeroSlideForm />} />
           <Route path="utenti" element={<UserList />} />
           <Route path="utenti/nuovo" element={<UserForm />} />
           <Route path="utenti/:id/modifica" element={<UserForm />} />

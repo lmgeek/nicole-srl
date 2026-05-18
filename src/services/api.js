@@ -105,6 +105,15 @@ class ApiService {
   users = {
     getAll: () => this.request('/api/users'),
   };
+
+  heroSlides = {
+    getAll: () => this.request('/api/hero-slides'),
+    getById: (id) => this.request(`/api/hero-slides/${id}`),
+    getPublic: () => fetch(`${API_URL}/api/public/hero-slides`).then(res => res.json()),
+    create: (data) => this.request('/api/hero-slides', { method: 'POST', body: JSON.stringify(data) }),
+    update: (id, data) => this.request(`/api/hero-slides/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    delete: (id) => this.request(`/api/hero-slides/${id}`, { method: 'DELETE' }),
+  };
 }
 
 export const api = new ApiService();

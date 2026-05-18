@@ -74,13 +74,29 @@ const saleSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
+const heroSlideSchema = new mongoose.Schema({
+  type: { type: String, enum: ['product', 'custom'], required: true },
+  product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+  image: { type: String, default: '' },
+  title: { type: String, default: '' },
+  subtitle: { type: String, default: '' },
+  description: { type: String, default: '' },
+  buttonText: { type: String, default: '' },
+  buttonLink: { type: String, default: '' },
+  enabled: { type: Boolean, default: true },
+  order: { type: Number, default: 0 },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+});
+
 const User = mongoose.model('User', userSchema);
 const Category = mongoose.model('Category', categorySchema);
 const Product = mongoose.model('Product', productSchema);
 const Client = mongoose.model('Client', clientSchema);
 const Sale = mongoose.model('Sale', saleSchema);
+const HeroSlide = mongoose.model('HeroSlide', heroSlideSchema);
 
-const models = { User, Category, Product, Client, Sale };
+const models = { User, Category, Product, Client, Sale, HeroSlide };
 
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
@@ -313,6 +329,69 @@ app.get('/api/products/:id', authenticateToken, async (req, res) => {
     const product = await Product.findById(req.params.id);
     if (!product) return res.status(404).json({ error: 'Prodotto non trovato' });
     res.json(product);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/public/hero-slides', async (req, res) => {
+  try {
+    const slides = await HeroSlide.find({ enabled: true }).sort({ order: 1 }).populate('product');
+    res.json(slides);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/hero-slides', authenticateToken, async (req, res) => {
+  try {
+    const slides = await HeroSlide.find().sort({ order: 1 }).populate('product');
+    res.json(slides);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/hero-slides/:id', authenticateToken, async (req, res) => {
+  try {
+    const slide = await HeroSlide.findById(req.params.id).populate('product');
+    if (!slide) return res.status(404).json({ error: 'Slide non trovata' });
+    res.json(slide);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/hero-slides', authenticateToken, async (req, res) => {
+  try {
+    const { product, ...rest } = req.body;
+    const data = { ...rest };
+    if (product && product !== '') data.product = product;
+    const slide = new HeroSlide(data);
+    await slide.save();
+    res.status(201).json(slide);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+app.put('/api/hero-slides/:id', authenticateToken, async (req, res) => {
+  try {
+    const { product, ...rest } = req.body;
+    const data = { ...rest };
+    if (product && product !== '') data.product = product;
+    else data.product = undefined;
+    const slide = await HeroSlide.findByIdAndUpdate(req.params.id, data, { new: true });
+    res.json(slide);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+app.delete('/api/hero-slides/:id', authenticateToken, async (req, res) => {
+  try {
+    await HeroSlide.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Slide eliminata' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

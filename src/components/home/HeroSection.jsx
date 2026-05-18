@@ -1,51 +1,86 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, ShoppingBag } from "lucide-react";
+import { ChevronLeft, ChevronRight, ShoppingBag, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-
-const featuredProducts = [
-  {
-    id: 1,
-    name: "Vestito di Seta Elegante",
-    description: "Vestito da sera in pura seta con dettagli in pizzo. Perfetto per occasioni speciali e serate eleganti.",
-    price: 129.99,
-    imageUrl: "/images/products/dress-1.jpg",
-  },
-  {
-    id: 2,
-    name: "Bolso di Cuoio Artigianale",
-    description: "Borsa a mano fatta a mano con cuoio genuino. Design unico e raffinato per ogni occasione.",
-    price: 89.50,
-    imageUrl: "/images/products/bag-1.jpg",
-  },
-  {
-    id: 3,
-    name: "Giacca in Vera Pelle",
-    description: "Giacca in pelle genuina con finiture artigianali. Eleganza e stile per il tuo guardaroba.",
-    price: 149.00,
-    imageUrl: "/images/products/jacket-1.jpg",
-  },
-];
+import api from "@/services/api";
 
 export default function HeroSection() {
+  const [slides, setSlides] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % featuredProducts.length);
-    }, 5000);
-    return () => clearInterval(interval);
+    api.heroSlides.getPublic()
+      .then(data => {
+        if (data && data.length > 0) {
+          setSlides(data);
+        }
+      })
+      .catch(err => console.error('Errore caricamento hero slides:', err))
+      .finally(() => setLoading(false));
   }, []);
 
+  useEffect(() => {
+    if (slides.length <= 1) return;
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % slides.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [slides.length]);
+
   const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % featuredProducts.length);
+    setCurrentIndex((prev) => (prev + 1) % slides.length);
   };
 
   const prevSlide = () => {
-    setCurrentIndex((prev) => (prev - 1 + featuredProducts.length) % featuredProducts.length);
+    setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length);
   };
 
-  const product = featuredProducts[currentIndex];
+  if (loading || slides.length === 0) return null;
+
+  const slide = slides[currentIndex];
+
+  const getImageUrl = () => {
+    if (slide.type === 'product' && slide.product?.images?.[0]) {
+      return slide.product.images[0];
+    }
+    return slide.image || '';
+  };
+
+  const getTitle = () => {
+    if (slide.type === 'product') {
+      return slide.product?.name || '';
+    }
+    return slide.title || '';
+  };
+
+  const getDescription = () => {
+    if (slide.type === 'product') {
+      return slide.product?.description || '';
+    }
+    return slide.description || '';
+  };
+
+  const getPrice = () => {
+    if (slide.type === 'product' && slide.product?.price) {
+      return `€${slide.product.price.toFixed(2)}`;
+    }
+    return null;
+  };
+
+  const getButtonText = () => {
+    if (slide.type === 'product') {
+      return 'Acquista Ora';
+    }
+    return slide.buttonText || 'Scopri di più';
+  };
+
+  const getButtonLink = () => {
+    if (slide.type === 'product') {
+      return '/collezione';
+    }
+    return slide.buttonLink || '/collezione';
+  };
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
@@ -54,34 +89,38 @@ export default function HeroSection() {
         <AnimatePresence mode="wait">
           <motion.div
             key={currentIndex}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0, scale: 1.05 }}
+            animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.8 }}
             className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(${product.imageUrl})` }}
+            style={{ backgroundImage: `url(${getImageUrl()})` }}
           />
         </AnimatePresence>
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent" />
       </div>
 
       {/* Navigation Arrows */}
-      <button
-        onClick={prevSlide}
-        className="absolute left-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/30 transition-all"
-        aria-label="Previous slide"
-      >
-        <ChevronLeft className="w-6 h-6" />
-      </button>
-      <button
-        onClick={nextSlide}
-        className="absolute right-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/30 transition-all"
-        aria-label="Next slide"
-      >
-        <ChevronRight className="w-6 h-6" />
-      </button>
+      {slides.length > 1 && (
+        <>
+          <button
+            onClick={prevSlide}
+            className="absolute left-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/30 transition-all"
+            aria-label="Previous slide"
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+          <button
+            onClick={nextSlide}
+            className="absolute right-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/30 transition-all"
+            aria-label="Next slide"
+          >
+            <ChevronRight className="w-6 h-6" />
+          </button>
+        </>
+      )}
 
-      {/* Product Info Box */}
+      {/* Content Box */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 w-full">
         <AnimatePresence mode="wait">
           <motion.div
@@ -92,14 +131,16 @@ export default function HeroSection() {
             transition={{ duration: 0.5 }}
             className="max-w-md rounded-3xl bg-white/50 backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.3)] p-8"
           >
-            <motion.p
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="font-body text-xs tracking-[0.3em] uppercase text-foreground/70 mb-4"
-            >
-              Prodotto in Evidenza
-            </motion.p>
+            {slide.subtitle && (
+              <motion.p
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="font-body text-xs tracking-[0.3em] uppercase text-foreground/70 mb-4"
+              >
+                {slide.subtitle}
+              </motion.p>
+            )}
 
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
@@ -107,17 +148,19 @@ export default function HeroSection() {
               transition={{ delay: 0.2 }}
               className="font-heading text-3xl md:text-4xl font-semibold text-foreground leading-tight mb-4"
             >
-              {product.name}
+              {getTitle()}
             </motion.h2>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="font-body text-base text-foreground/80 leading-relaxed mb-6 line-clamp-3"
-            >
-              {product.description}
-            </motion.p>
+            {getDescription() && (
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="font-body text-base text-foreground/80 leading-relaxed mb-6 line-clamp-3"
+              >
+                {getDescription()}
+              </motion.p>
+            )}
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -125,31 +168,39 @@ export default function HeroSection() {
               transition={{ delay: 0.4 }}
               className="flex items-center justify-between"
             >
-              <span className="font-heading text-2xl font-semibold text-foreground">
-                €{product.price.toFixed(2)}
-              </span>
+              {getPrice() && (
+                <span className="font-heading text-2xl font-semibold text-foreground">
+                  {getPrice()}
+                </span>
+              )}
               <Link
-                to={`/product/${product.id}`}
+                to={getButtonLink()}
                 className="inline-flex items-center gap-2 bg-foreground text-background px-6 py-3 rounded-full font-body text-sm font-semibold tracking-wide uppercase hover:opacity-90 transition-all"
               >
-                <ShoppingBag className="w-4 h-4" />
-                Buy Now
+                {slide.type === 'product' ? (
+                  <ShoppingBag className="w-4 h-4" />
+                ) : (
+                  <ArrowRight className="w-4 h-4" />
+                )}
+                {getButtonText()}
               </Link>
             </motion.div>
 
             {/* Slide Indicators */}
-            <div className="flex gap-2 mt-6 justify-center">
-              {featuredProducts.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentIndex(index)}
-                  className={`w-2 h-2 rounded-full transition-all ${
-                    index === currentIndex ? "bg-foreground w-6" : "bg-foreground/30"
-                  }`}
-                  aria-label={`Go to slide ${index + 1}`}
-                />
-              ))}
-            </div>
+            {slides.length > 1 && (
+              <div className="flex gap-2 mt-6 justify-center">
+                {slides.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentIndex(index)}
+                    className={`h-2 rounded-full transition-all ${
+                      index === currentIndex ? "bg-foreground w-6" : "bg-foreground/30 w-2"
+                    }`}
+                    aria-label={`Go to slide ${index + 1}`}
+                  />
+                ))}
+              </div>
+            )}
           </motion.div>
         </AnimatePresence>
       </div>

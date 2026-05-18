@@ -1,5 +1,5 @@
 import React from 'react';
-import { Package, Users, ShoppingCart, Tag, TrendingUp, Star } from 'lucide-react';
+import { Package, Users, ShoppingCart, Tag, TrendingUp, Star, Image, DollarSign, Shield, User, UserCheck } from 'lucide-react';
 
 const iconMap = {
   package: Package,
@@ -8,6 +8,11 @@ const iconMap = {
   tag: Tag,
   trend: TrendingUp,
   star: Star,
+  image: Image,
+  dollar: DollarSign,
+  shield: Shield,
+  user: User,
+  userCheck: UserCheck,
 };
 
 const StatCard = ({ icon, label, value, change, changeType }) => {

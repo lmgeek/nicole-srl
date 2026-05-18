@@ -1,11 +1,12 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
-import { Package, Tag, Users, UserCheck, ShoppingCart, LogOut, LayoutDashboard } from 'lucide-react';
+import { Package, Tag, Users, UserCheck, ShoppingCart, LogOut, LayoutDashboard, Image } from 'lucide-react';
 
 const navItems = [
   { to: '/admin/prodotti', icon: Package, label: 'Prodotti' },
   { to: '/admin/categorie', icon: Tag, label: 'Categorie' },
+  { to: '/admin/hero', icon: Image, label: 'Hero Slider' },
   { to: '/admin/clienti', icon: UserCheck, label: 'Clienti' },
   { to: '/admin/vendite', icon: ShoppingCart, label: 'Vendite' },
   { to: '/admin/utenti', icon: Users, label: 'Utenti' },
