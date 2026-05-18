@@ -15,7 +15,9 @@ RUN npm run build
 
 FROM node:22-alpine
 
-RUN apk add --no-cache curl
+RUN apk add --no-cache curl nginx supervisor
+
+COPY --from=builder /app/dist /usr/share/nginx/html
 
 WORKDIR /app
 
@@ -25,16 +27,18 @@ RUN npm ci --only=production && npm cache clean --force
 
 COPY server/ ./server/
 
-COPY --from=builder /app/dist ./dist
+COPY nginx.conf /etc/nginx/http.d/default.conf
+
+COPY supervisord.conf /etc/supervisord.conf
 
 RUN addgroup -g 1001 -S nodejs && adduser -S nodejs -u 1001
 RUN chown -R nodejs:nodejs /app
 
 USER nodejs
 
-EXPOSE 80
+EXPOSE 80 3001
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
-  CMD curl -f http://localhost:80/api/health || exit 1
+  CMD curl -f http://localhost:3001/api/health || exit 1
 
-CMD ["node", "server/index.js"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]

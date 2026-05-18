@@ -6,13 +6,11 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import runMigrations from './migrations/runner.js';
 import migrations from './migrations/index.js';
-import fs from 'fs';
-import path from 'path';
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 80;
+const PORT = process.env.PORT || 3001;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-key-change-in-production';
 
 app.use(cors({
@@ -22,11 +20,6 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
-
-const distPath = path.join(process.cwd(), 'dist');
-if (fs.existsSync(distPath)) {
-  app.use(express.static(distPath));
-}
 
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -401,15 +394,6 @@ app.delete('/api/hero-slides/:id', authenticateToken, async (req, res) => {
     res.json({ message: 'Slide eliminata' });
   } catch (error) {
     res.status(500).json({ error: error.message });
-  }
-});
-
-app.get('/{*path}', (req, res) => {
-  const indexPath = path.join(process.cwd(), 'dist', 'index.html');
-  if (fs.existsSync(indexPath)) {
-    res.sendFile(indexPath);
-  } else {
-    res.status(404).json({ error: 'Not found' });
   }
 });
 

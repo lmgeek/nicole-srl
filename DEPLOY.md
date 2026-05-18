@@ -1,37 +1,43 @@
 # Deploy con Portainer
 
-## Dockerfile (producción)
+## Arquitectura
 
-Un solo contenedor que incluye frontend + backend:
-
-```bash
-docker build --build-arg VITE_API_URL=http://TU_DOMINIO:3001 -t nicole-srl .
-docker run -d -p 3001:3001 \
-  -e MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/nicole \
-  -e JWT_SECRET=tu-clave-secreta \
-  --name nicole-srl \
-  nicole-srl
+```
+┌──────────────────────────────────┐
+│         Contenedor único          │
+│  ┌──────────┐  ┌───────────────┐ │
+│  │  Nginx   │  │   Express     │ │
+│  │  Puerto  │  │   Puerto      │ │
+│  │    80    │  │    3001       │ │
+│  │(frontend)│  │  (API)        │ │
+│  └──────────┘  └───────────────┘ │
+└──────────────────────────────────┘
 ```
 
-## Portainer — Deploy automático con Git
+- **Nginx:80** → Frontend estático (SPA con gzip + cache)
+- **Express:3001** → API REST + MongoDB
+- **Supervisord** → Gestiona ambos procesos
 
-### 1. Configurar Stack
+## Portainer — Deploy automático
 
-1. Portainer → **Stacks** → **Add stack**
+### 1. Configurar Application
+
+1. Portainer → **Applications** → **Add application** → **Git Repository**
 2. Name: `nicole-srl`
-3. **Build method**: Git repository
-4. Repository URL: tu repo
-5. Branch: `main`
-6. **Environment variables**:
+3. Repository URL: tu repo
+4. Branch: `main`
+5. **Dockerfile**: `Dockerfile`
+6. **Build args**: `VITE_API_URL=http://TU_DOMINIO:3001`
+7. **Environment variables**:
 
 | Variable | Descripción |
 |---|---|
-| `MONGODB_URI` | Connection string de MongoDB (Atlas o externo) |
-| `JWT_SECRET` | Clave secreta para tokens JWT |
-| `VITE_API_URL` | URL del servidor (ej: `http://TU_IP:3001`) |
+| `MONGODB_URI` | Connection string MongoDB (Atlas o externo) |
+| `JWT_SECRET` | Clave secreta JWT |
 
-7. ✅ **Activate webhooks** → copia la URL
-8. **Deploy the stack**
+8. **Publish ports**: `80` y `3001`
+9. ✅ **Activate webhooks**
+10. **Deploy**
 
 ### 2. Webhook en GitHub
 
@@ -45,7 +51,7 @@ GitHub → Settings → Webhooks → Add webhook:
 MongoDB se ejecuta **fuera** del contenedor:
 
 **MongoDB Atlas** (recomendado):
-- Configura `MONGODB_URI` con tu connection string
+- `MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/nicole`
 
 **Contenedor separado**:
 ```bash
@@ -64,17 +70,19 @@ docker run -d --name nicole-mongo \
 docker compose up -d --build
 ```
 
-- Frontend: `http://localhost:80` (Vite con hot-reload)
+- Frontend: `http://localhost:80` (Vite hot-reload)
 - Backend: `http://localhost:3001` (nodemon)
 - Mongo Express: `http://localhost:8081`
 
 ## Estructura de archivos
 
 ```
-├── Dockerfile              # Producción (multi-stage)
+├── Dockerfile              # Producción (multi-stage + supervisord)
 ├── docker-compose.yml      # Desarrollo local
 ├── Dockerfile.server.dev   # Dev server con nodemon
 ├── Dockerfile.frontend.dev # Dev frontend con Vite
-├── .dockerignore           # Excluye archivos del build prod
+├── nginx.conf              # Config Nginx producción
+├── supervisord.conf        # Gestor de procesos (nginx + server)
+├── .dockerignore           # Excluye archivos del build
 └── DEPLOY.md               # Esta guía
 ```
