@@ -32,9 +32,9 @@ RUN chown -R nodejs:nodejs /app
 
 USER nodejs
 
-EXPOSE 3001
+EXPOSE 80
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
-  CMD curl -f http://localhost:3001/api/health || exit 1
+  CMD curl -f http://localhost:80/api/health || exit 1
 
 CMD ["node", "server/index.js"]
