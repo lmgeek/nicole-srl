@@ -1,126 +1,110 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Trash2, Edit2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, Mail, Phone, MapPin, UserCheck, DollarSign, AlertCircle } from 'lucide-react';
+import clientService from '@/admin/services/clientService';
+import StatCard from '@/admin/components/StatCard';
+import EmptyState from '@/admin/components/EmptyState';
 
 const ClientesList = () => {
   const [clienti, setClienti] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchClienti = async () => {
-    try {
-      setLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      const clientiData = [
-        {
-          id: 1,
-          nome: "María González",
-          email: "maria.gonzalez@email.com",
-          telefono: "+34 600 111 222",
-          indirizzo: "Calle Mayor 123, Madrid",
-          dataRegistrazione: "2026-01-15",
-          acquisti: 5,
-          totaleSpeso: 450.00
-        },
-        {
-          id: 2,
-          nome: "Carlos Méndez",
-          email: "carlos.mendez@email.com",
-          telefono: "+34 600 333 444",
-          indirizzo: "Avenida Diagonal 456, Barcelona",
-          dataRegistrazione: "2026-02-20",
-          acquisti: 3,
-          totaleSpeso: 280.50
-        },
-        {
-          id: 3,
-          nome: "Laura Fernández",
-          email: "laura.fernandez@email.com",
-          telefono: "+34 600 555 666",
-          indirizzo: "Plaza España 789, Sevilla",
-          dataRegistrazione: "2026-03-10",
-          acquisti: 8,
-          totaleSpeso: 1200.75
-        }
-      ];
-      
-      setClienti(clientiData);
-      setError(null);
-    } catch (err) {
-      setError(err.message || 'Errore nel caricamento dei clienti');
-      setClienti([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDelete = async (id) => {
-    if (!window.confirm('Sei sicuro di voler eliminare questo cliente?')) {
-      return;
-    }
-
-    try {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      setClienti(clienti.filter(c => c.id !== id));
-    } catch (err) {
-      setError(err.message || 'Errore nell\'eliminazione del cliente');
-    }
-  };
-
   useEffect(() => {
-    fetchClienti();
+    clientService.getAll().then(data => {
+      setClienti(data.map(c => ({ _id: c._id, nome: c.name, email: c.email || '', telefono: c.phone || '', indirizzo: c.address || '', acquisti: c.totalPurchases || 0, totaleSpeso: c.totalSpent || 0 })));
+    }).catch(err => setError(err.message)).finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="text-center py-12">Caricamento...</div>;
-  if (error) return <div className="text-center text-red-500 py-12">{error}</div>;
+  const handleDelete = async (id) => {
+    if (!window.confirm('Eliminare questo cliente?')) return;
+    try { await clientService.delete(id); setClienti(clienti.filter(c => c._id !== id)); }
+    catch (err) { setError(err.message); }
+  };
+
+  if (loading) return <div className="admin-loading"><div className="admin-loading-spinner" /></div>;
+  if (error) return <div className="admin-error"><AlertCircle className="w-4 h-4" />{error}</div>;
+
+  const totalSpeso = clienti.reduce((sum, c) => sum + c.totaleSpeso, 0);
+  const totalAcquisti = clienti.reduce((sum, c) => sum + c.acquisti, 0);
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Elenco dei Clienti</h1>
-        <Link to="/admin/clienti/nuovo" className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+      <div className="flex items-start justify-between mb-8">
+        <div>
+          <h1 className="admin-page-title">Clienti</h1>
+          <p className="admin-page-subtitle">Gestisci la rubrica clienti</p>
+        </div>
+        <Link to="/admin/clienti/nuovo" className="admin-btn-primary">
+          <Plus className="w-4 h-4" />
           Nuovo Cliente
         </Link>
       </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <StatCard icon="users" label="Totale Clienti" value={clienti.length} />
+        <StatCard icon="cart" label="Acquisti Totali" value={totalAcquisti} />
+        <StatCard icon="trend" label="Ricavo Totale" value={`€ ${totalSpeso.toFixed(2).replace('.', ',')}`} />
+      </div>
+
       {clienti.length === 0 ? (
-        <div className="text-center text-gray-500 py-12">
-          Nessun cliente registrato.
+        <div className="admin-table-wrapper">
+          <EmptyState icon={UserCheck} title="Nessun cliente" description="I clienti appariranno qui dopo il primo acquisto." />
         </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white">
+        <div className="admin-table-wrapper">
+          <table className="admin-table">
             <thead>
-              <tr className="bg-gray-100">
-                <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
-                <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Telefono</th>
-                <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Indirizzo</th>
-                <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acquisti</th>
-                <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Totale Speso</th>
-                <th className="py-3 px-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Azioni</th>
+              <tr>
+                <th>Cliente</th>
+                <th>Email</th>
+                <th>Telefono</th>
+                <th>Indirizzo</th>
+                <th>Acquisti</th>
+                <th>Totale Speso</th>
+                <th className="text-right">Azioni</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {clienti.map(cliente => (
-                <tr key={cliente.id} className="hover:bg-gray-50">
-                  <td className="py-3 px-4 text-sm text-gray-900">{cliente.id}</td>
-                  <td className="py-3 px-4 text-sm text-gray-700">{cliente.nome}</td>
-                  <td className="py-3 px-4 text-sm text-gray-700">{cliente.email}</td>
-                  <td className="py-3 px-4 text-sm text-gray-700">{cliente.telefono}</td>
-                  <td className="py-3 px-4 text-sm text-gray-700">{cliente.indirizzo}</td>
-                  <td className="py-3 px-4 text-sm text-gray-700">{cliente.acquisti}</td>
-                  <td className="py-3 px-4 text-sm text-gray-700">€{cliente.totaleSpeso.toFixed(2)}</td>
-                  <td className="py-3 px-4 text-sm text-right space-x-2">
-                    <Link to={`/admin/clienti/${cliente.id}/modifica`} className="flex items-center space-x-2 text-indigo-600 hover:text-indigo-900 p-1">
-                      <Edit2 className="h-4 w-4" />
-                    </Link>
-                    <button onClick={() => handleDelete(cliente.id)} className="flex items-center space-x-2 text-red-600 hover:text-red-900 p-1">
-                      <Trash2 className="h-4 w-4" />
-                    </button>
+            <tbody>
+              {clienti.map(c => (
+                <tr key={c._id}>
+                  <td>
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                        <span className="text-xs font-medium text-gray-600">{c.nome.charAt(0).toUpperCase()}</span>
+                      </div>
+                      <span className="font-medium text-gray-900">{c.nome}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div className="flex items-center gap-1.5 text-gray-500">
+                      <Mail className="w-3.5 h-3.5" />
+                      {c.email || '—'}
+                    </div>
+                  </td>
+                  <td>
+                    <div className="flex items-center gap-1.5 text-gray-500">
+                      <Phone className="w-3.5 h-3.5" />
+                      {c.telefono || '—'}
+                    </div>
+                  </td>
+                  <td>
+                    <div className="flex items-center gap-1.5 text-gray-500 max-w-[200px] truncate">
+                      <MapPin className="w-3.5 h-3.5 shrink-0" />
+                      {c.indirizzo || '—'}
+                    </div>
+                  </td>
+                  <td className="font-medium">{c.acquisti}</td>
+                  <td className="font-medium">€ {c.totaleSpeso.toFixed(2).replace('.', ',')}</td>
+                  <td className="text-right">
+                    <div className="flex items-center justify-end gap-1">
+                      <Link to={`/admin/clienti/${c._id}/modifica`} className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
+                        <Pencil className="w-4 h-4" />
+                      </Link>
+                      <button onClick={() => handleDelete(c._id)} className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

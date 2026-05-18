@@ -1,136 +1,111 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Trash2, Edit2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, ShoppingCart, DollarSign, TrendingUp, AlertCircle } from 'lucide-react';
+import saleService from '@/admin/services/saleService';
+import StatCard from '@/admin/components/StatCard';
+import EmptyState from '@/admin/components/EmptyState';
+
+const statusConfig = {
+  pending: { label: 'In sospeso', class: 'admin-badge-warning' },
+  processing: { label: 'In lavorazione', class: 'admin-badge-info' },
+  shipped: { label: 'Spedito', class: 'admin-badge-info' },
+  delivered: { label: 'Consegnato', class: 'admin-badge-success' },
+  completed: { label: 'Completato', class: 'admin-badge-success' },
+  cancelled: { label: 'Annullato', class: 'admin-badge-danger' },
+};
 
 const VentasList = () => {
   const [vendite, setVendite] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchVendite = async () => {
-    try {
-      setLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      const venditeData = [
-        {
-          id: 1,
-          cliente: "María González",
-          prodotto: "Vestito di Seta Elegante",
-          quantita: 1,
-          totale: 129.99,
-          stato: "Completato"
-        },
-        {
-          id: 2,
-          cliente: "Carlos Méndez",
-          prodotto: "Bolso di Cuoio Artigianale",
-          quantita: 2,
-          totale: 179.00,
-          stato: "In sospeso"
-        },
-        {
-          id: 3,
-          cliente: "Laura Fernández",
-          prodotto: "Scarpe con Tacco Classico",
-          quantita: 1,
-          totale: 65.00,
-          stato: "Completato"
-        },
-        {
-          id: 4,
-          cliente: "María González",
-          prodotto: "Scarpe con Tacco Classico",
-          quantita: 1,
-          totale: 65.00,
-          stato: "Spedito"
-        }
-      ];
-      
-      setVendite(venditeData);
-      setError(null);
-    } catch (err) {
-      setError(err.message || 'Errore nel caricamento delle vendite');
-      setVendite([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDelete = async (id) => {
-    if (!window.confirm('Sei sicuro di voler eliminare questa vendita?')) {
-      return;
-    }
-
-    try {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      setVendite(vendite.filter(v => v.id !== id));
-    } catch (err) {
-      setError(err.message || 'Errore nell\'eliminazione della vendita');
-    }
-  };
-
   useEffect(() => {
-    fetchVendite();
+    saleService.getAll().then(data => {
+      setVendite(data.map(v => ({ _id: v._id, cliente: v.clientName || 'Cliente', prodotti: v.products || [], totale: v.total, stato: v.status, createdAt: v.createdAt })));
+    }).catch(err => setError(err.message)).finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="text-center py-12">Caricamento...</div>;
-  if (error) return <div className="text-center text-red-500 py-12">{error}</div>;
+  const handleDelete = async (id) => {
+    if (!window.confirm('Eliminare questa vendita?')) return;
+    try { await saleService.delete(id); setVendite(vendite.filter(v => v._id !== id)); }
+    catch (err) { setError(err.message); }
+  };
+
+  if (loading) return <div className="admin-loading"><div className="admin-loading-spinner" /></div>;
+  if (error) return <div className="admin-error"><AlertCircle className="w-4 h-4" />{error}</div>;
+
+  const totalRevenue = vendite.reduce((sum, v) => sum + (v.totale || 0), 0);
+  const completedCount = vendite.filter(v => v.stato === 'completed' || v.stato === 'delivered').length;
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Elenco delle Vendite</h1>
-        <Link to="/admin/vendite/nuovo" className="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+      <div className="flex items-start justify-between mb-8">
+        <div>
+          <h1 className="admin-page-title">Vendite</h1>
+          <p className="admin-page-subtitle">Storico ordini e vendite</p>
+        </div>
+        <Link to="/admin/vendite/nuovo" className="admin-btn-primary">
+          <Plus className="w-4 h-4" />
           Nuova Vendita
         </Link>
       </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <StatCard icon="cart" label="Totale Ordini" value={vendite.length} />
+        <StatCard icon="trend" label="Ricavo Totale" value={`€ ${totalRevenue.toFixed(2).replace('.', ',')}`} />
+        <StatCard icon="DollarSign" label="Completati" value={completedCount} />
+      </div>
+
       {vendite.length === 0 ? (
-        <div className="text-center text-gray-500 py-12">
-          Nessuna vendita registrata.
+        <div className="admin-table-wrapper">
+          <EmptyState icon={ShoppingCart} title="Nessuna vendita" description="Le vendite appariranno qui quando verranno registrate." />
         </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white">
+        <div className="admin-table-wrapper">
+          <table className="admin-table">
             <thead>
-              <tr className="bg-gray-100">
-                <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cliente</th>
-                <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prodotto</th>
-                <th className="py-3 px-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Quantità</th>
-                <th className="py-3 px-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Totale</th>
-                <th className="py-3 px-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Stato</th>
-                <th className="py-3 px-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Azioni</th>
+              <tr>
+                <th>#</th>
+                <th>Cliente</th>
+                <th>Prodotti</th>
+                <th>Totale</th>
+                <th>Stato</th>
+                <th>Data</th>
+                <th className="text-right">Azioni</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {vendite.map(vendita => (
-                <tr key={vendita.id} className="hover:bg-gray-50">
-                  <td className="py-3 px-4 text-sm text-gray-900">{vendita.id}</td>
-                  <td className="py-3 px-4 text-sm text-gray-700">{vendita.cliente}</td>
-                  <td className="py-3 px-4 text-sm text-gray-700">{vendita.prodotto}</td>
-                  <td className="py-3 px-4 text-center text-sm text-gray-700">{vendita.quantita}</td>
-                  <td className="py-3 px-4 text-right text-sm text-gray-700">€{vendita.totale.toFixed(2)}</td>
-                  <td className="py-3 px-4 text-center text-sm text-gray-700">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                      ${vendita.stato === 'Completato' ? 'bg-green-100 text-green-800' : 
-                        vendita.stato === 'In sospeso' ? 'bg-yellow-100 text-yellow-800' : 
-                        'bg-blue-100 text-blue-800'}`}>
-                      {vendita.stato}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 text-sm text-right space-x-2">
-                    <Link to={`/admin/vendite/${vendita.id}/modifica`} className="flex items-center space-x-2 text-indigo-600 hover:text-indigo-900 p-1">
-                      <Edit2 className="h-4 w-4" />
-                    </Link>
-                    <button onClick={() => handleDelete(vendita.id)} className="flex items-center space-x-2 text-red-600 hover:text-red-900 p-1">
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
+            <tbody>
+              {vendite.map((v, i) => {
+                const status = statusConfig[v.stato] || { label: v.stato, class: 'admin-badge-neutral' };
+                return (
+                  <tr key={v._id}>
+                    <td className="text-gray-400 font-mono text-xs">{String(i + 1).padStart(3, '0')}</td>
+                    <td className="font-medium text-gray-900">{v.cliente}</td>
+                    <td>
+                      <div className="space-y-0.5">
+                        {v.prodotti.map((p, j) => (
+                          <p key={j} className="text-sm text-gray-600">{p.productName || p.product} × {p.quantity}</p>
+                        ))}
+                      </div>
+                    </td>
+                    <td className="font-semibold">€ {(v.totale || 0).toFixed(2).replace('.', ',')}</td>
+                    <td>
+                      <span className={status.class}>{status.label}</span>
+                    </td>
+                    <td className="text-gray-500 text-xs">{v.createdAt ? new Date(v.createdAt).toLocaleDateString('it-IT') : '—'}</td>
+                    <td className="text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        <Link to={`/admin/vendite/${v._id}/modifica`} className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
+                          <Pencil className="w-4 h-4" />
+                        </Link>
+                        <button onClick={() => handleDelete(v._id)} className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

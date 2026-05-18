@@ -1,89 +1,76 @@
-import React, { createContext, useState, useContext, useCallback } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
+import userService from '@/admin/services/userService';
 
 const AuthContext = createContext();
-
-const clearStoredTokens = () => {
-  if (typeof window === 'undefined' || !window.localStorage) return;
-  ['access_token', 'token'].forEach((k) =>
-    window.localStorage.removeItem(k)
-  );
-};
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authError, setAuthError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [authChecked, setAuthChecked] = useState(false);
 
-  const checkAppState = useCallback(async () => {
-    setAuthError(null);
-  }, []);
-
-  const checkUserAuth = useCallback(async () => {
-    if (typeof window !== 'undefined') {
-      const mockUser = localStorage.getItem('mock_admin_user');
-      if (mockUser) {
-        try {
-          const userData = JSON.parse(mockUser);
-          setUser(userData);
-          setIsAuthenticated(true);
-          return;
-        } catch (e) {
-          localStorage.removeItem('mock_admin_user');
-          localStorage.removeItem('mock_admin_logged_in');
-        }
+  useEffect(() => {
+    const checkAuth = () => {
+      const storedUser = userService.getCurrentUser();
+      const isAuth = userService.isAuthenticated();
+      
+      if (storedUser && isAuth) {
+        setUser(storedUser);
+        setIsAuthenticated(true);
+      } else {
+        setUser(null);
+        setIsAuthenticated(false);
       }
-    }
-    setIsAuthenticated(false);
-    setUser(null);
+      setIsLoading(false);
+      setAuthChecked(true);
+    };
+    
+    checkAuth();
   }, []);
 
-  const login = useCallback((username, password) => {
-    if (username === 'admin' && password === 'Nicol3123!Admin') {
-      const userData = { id: 1, username: 'admin', role: 'admin' };
-      setUser(userData);
+  const login = useCallback(async (email, password) => {
+    try {
+      setAuthError(null);
+      const result = await userService.login(email, password);
+      setUser(result.user);
       setIsAuthenticated(true);
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('mock_admin_logged_in', 'true');
-        localStorage.setItem('mock_admin_user', JSON.stringify(userData));
-      }
-      return true;
+      setAuthChecked(true);
+      return result;
+    } catch (error) {
+      setAuthError(error.message);
+      throw error;
     }
-    return false;
   }, []);
 
-  const logout = useCallback((shouldRedirect = true) => {
+  const logout = useCallback(() => {
+    userService.logout();
     setUser(null);
     setIsAuthenticated(false);
-    clearStoredTokens();
+    setAuthChecked(false);
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('mock_admin_logged_in');
-      localStorage.removeItem('mock_admin_user');
-    }
-    if (shouldRedirect && typeof window !== 'undefined') {
       window.location.href = '/';
     }
   }, []);
 
-  const navigateToLogin = useCallback(() => {
-    if (typeof window !== 'undefined') {
-      window.location.href = '/login';
-    }
+  const checkUserAuth = useCallback(() => {
+    const storedUser = userService.getCurrentUser();
+    const isAuth = userService.isAuthenticated();
+    setUser(storedUser);
+    setIsAuthenticated(isAuth);
+    setAuthChecked(true);
   }, []);
 
   return (
     <AuthContext.Provider value={{
       user,
       isAuthenticated,
-      isLoadingAuth: false,
-      isLoadingPublicSettings: false,
+      isLoadingAuth: isLoading,
+      authChecked,
       authError,
-      appPublicSettings: null,
-      authChecked: true,
       login,
       logout,
-      navigateToLogin,
-      checkUserAuth,
-      checkAppState
+      checkUserAuth
     }}>
       {children}
     </AuthContext.Provider>

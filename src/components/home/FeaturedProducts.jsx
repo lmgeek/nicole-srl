@@ -1,52 +1,43 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-
-const products = [
-  {
-    name: "Vestito Athena",
-    price: "€ 129,00",
-    image: "/images/products/dress-1.jpg",
-    alt: "Vestito elegante Athena in seta dorata",
-    tag: "Nuovi Arrivi",
-  },
-  {
-    name: "Blusa Valentina",
-    price: "€ 79,00",
-    image: "/images/products/blouse-1.jpg",
-    alt: "Blusa Valentina in seta rosa",
-    tag: "Più Venduti",
-  },
-  {
-    name: "Gonna Bianca Luna",
-    price: "€ 89,00",
-    image: "/images/products/skirt-1.jpg",
-    alt: "Gonna bianca Luna in cotone pregiato",
-    tag: null,
-  },
-  {
-    name: "Giacca Roma",
-    price: "€ 159,00",
-    image: "/images/products/jacket-1.jpg",
-    alt: "Giacca Roma in lana cognac",
-    tag: null,
-  },
-  {
-    name: "Pantaloni Sofia",
-    price: "€ 99,00",
-    image: "/images/products/pants-1.jpg",
-    alt: "Pantaloni Sofia in cotone nude",
-    tag: "Nuovi Arrivi",
-  },
-  {
-    name: "Borsa Sera",
-    price: "€ 69,00",
-    image: "/images/products/bag-1.jpg",
-    alt: "Borsa Sera in pelle rosa antico",
-    tag: "Accessori",
-  },
-];
+import api from '@/services/api';
 
 export default function FeaturedProducts() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFeatured = async () => {
+      try {
+        const data = await api.publicProducts.getFeatured();
+        setProducts(data);
+      } catch (err) {
+        console.error('Errore nel caricamento dei prodotti preferiti:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFeatured();
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="py-24 md:py-32 bg-card">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <div className="text-center">
+            <p className="text-lg">Caricamento...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (products.length === 0) {
+    return null;
+  }
+
   return (
     <section className="py-24 md:py-32 bg-card">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
@@ -75,7 +66,7 @@ export default function FeaturedProducts() {
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
           {products.map((product, index) => (
             <motion.div
-              key={product.name}
+              key={product._id || product.name}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -83,21 +74,24 @@ export default function FeaturedProducts() {
               className="group cursor-pointer"
             >
               <div className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-background mb-4">
-                <img
-                  src={product.image}
-                  alt={product.alt}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                />
-                {product.tag && (
-                  <span className="absolute top-4 left-4 bg-primary text-primary-foreground font-body text-[10px] tracking-wider uppercase px-3 py-1.5 rounded-full">
-                    {product.tag}
-                  </span>
+                {product.images && product.images.length > 0 ? (
+                  <img
+                    src={product.images[0]}
+                    alt={product.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                    <span className="text-gray-400 text-sm">Nessuna immagine</span>
+                  </div>
                 )}
               </div>
               <h3 className="font-heading text-lg md:text-xl font-medium text-foreground mb-1">
                 {product.name}
               </h3>
-              <p className="font-body text-sm text-foreground/60">{product.price}</p>
+              <p className="font-body text-sm text-foreground/60">
+                € {product.price.toFixed(2).replace('.', ',')}
+              </p>
             </motion.div>
           ))}
         </div>

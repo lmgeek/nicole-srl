@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:7.0
+    container_name: nicole-mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: Nicole2024!
+    networks:
+      - nicole-network
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: nicole-mongo-express
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: Nicole2024!
+      ME_CONFIG_MONGODB_URL: mongodb://admin:Nicole2024!@mongo:27017/
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: Nicole2024!
+    depends_on:
+      - mongo
+    networks:
+      - nicole-network
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    container_name: nicole-server
+    restart: always
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./server:/app/server
+      - ./package.json:/app/package.json
+      - ./package-lock.json:/app/package-lock.json
+    environment:
+      - NODE_ENV=development
+      - MONGODB_URI=mongodb://admin:Nicole2024!@mongo:27017/nicole-trend-shop?authSource=admin
+      - PORT=3001
+      - JWT_SECRET=your-super-secret-key-change-in-production
+    depends_on:
+      - mongo
+    networks:
+      - nicole-network
+    command: ["npx", "nodemon", "server/index.js"]
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: nicole-frontend
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:3001
+    depends_on:
+      - server
+    networks:
+      - nicole-network
+    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "80"]
+
+volumes:
+  mongo-data:
+
+networks:
+  nicole-network:
+    driver: bridge

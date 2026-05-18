@@ -7,10 +7,23 @@ import UserList from './pages/UserList';
 import UserForm from './pages/UserForm';
 import ClientesList from './pages/ClientesList';
 import VentasList from './pages/VentasList';
+import CategoryList from './pages/CategoryList';
+import CategoryForm from './pages/CategoryForm';
 
 const RequireAuth = ({ children }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoadingAuth } = useAuth();
   const location = useLocation();
+
+  if (isLoadingAuth) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-gray-200 border-t-foreground/30 rounded-full animate-spin mx-auto" />
+          <p className="text-sm text-gray-400 mt-3">Caricamento...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;
@@ -28,6 +41,9 @@ const AdminRoutes = () => {
           <Route path="prodotti" element={<ProductList />} />
           <Route path="prodotti/nuovo" element={<ProductForm />} />
           <Route path="prodotti/:id/modifica" element={<ProductForm />} />
+          <Route path="categorie" element={<CategoryList />} />
+          <Route path="categorie/nuovo" element={<CategoryForm />} />
+          <Route path="categorie/:id/modifica" element={<CategoryForm />} />
           <Route path="utenti" element={<UserList />} />
           <Route path="utenti/nuovo" element={<UserForm />} />
           <Route path="utenti/:id/modifica" element={<UserForm />} />

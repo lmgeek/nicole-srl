@@ -11,6 +11,7 @@ import Contatti from './pages/Contatti';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import SpedizioniResi from './pages/SpedizioniResi';
 import ModalitaPagamento from './pages/ModalitaPagamento';
+import Login from './components/auth/Login';
 import AdminRoutes from './admin/AdminRoutes';
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/spedizioni-resi" element={<SpedizioniResi />} />
             <Route path="/modalita-pagamento" element={<ModalitaPagamento />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/admin/*" element={<AdminRoutes />} />
             <Route path="*" element={<PageNotFound />} />
           </Routes>
