@@ -1,34 +1,29 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import api from "@/services/api";
 
-const categories = [
-  {
-    name: "Vestiti",
-    subtitle: "Eleganza classica",
-    image: "/images/products/dress-1.jpg",
-    alt: "Vestito elegante in seta rosa su sfondo terracotta"
-  },
-  {
-    name: "Bluse",
-    subtitle: "Stile audace",
-    image: "/images/products/blouse-1.jpg",
-    alt: "Blusa in seta su superficie di marmo"
-  },
-  {
-    name: "Gonne",
-    subtitle: "Freschezza estiva",
-    image: "/images/products/skirt-1.jpg",
-    alt: "Gonna estiva in cotone su tessuto di lino"
-  },
-  {
-    name: "Giacche",
-    subtitle: "Comfort e stile",
-    image: "/images/products/jacket-1.jpg",
-    alt: "Giacca in lana crema con dettagli eleganti"
-  },
+const defaultCategories = [
+  { name: "Vestiti", image: "/images/products/dress-1.jpg" },
+  { name: "Bluse", image: "/images/products/blouse-1.jpg" },
+  { name: "Gonne", image: "/images/products/skirt-1.jpg" },
+  { name: "Giacche", image: "/images/products/jacket-1.jpg" },
 ];
 
 export default function CategoriesSection() {
+  const [categories, setCategories] = useState(defaultCategories);
+
+  useEffect(() => {
+    api.categories.getEnabled()
+      .then(data => {
+        const filtered = data.filter(c => c.slug !== 'tutto' && c.image);
+        if (filtered.length > 0) {
+          setCategories(filtered.map(c => ({ name: c.name, image: c.image })));
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <section className="py-24 md:py-32">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
@@ -61,14 +56,11 @@ export default function CategoriesSection() {
               >
                 <img
                   src={cat.image}
-                  alt={cat.alt}
+                  alt={cat.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-5 md:p-6">
-                  <p className="font-body text-[10px] tracking-[0.2em] uppercase text-primary-foreground/70 mb-1">
-                    {cat.subtitle}
-                  </p>
                   <h3 className="font-heading text-xl md:text-2xl font-semibold text-primary-foreground">
                     {cat.name}
                   </h3>

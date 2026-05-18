@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { Plus, Trash2, Pencil, Star, Search, Filter, Package, AlertCircle } from 'lucide-react';
 import StatCard from '@/admin/components/StatCard';
 import EmptyState from '@/admin/components/EmptyState';
+import HoverImagePreview from '@/admin/components/HoverImagePreview';
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -183,7 +184,7 @@ const ProductList = () => {
                   <td>
                     <div className="flex items-center gap-3">
                       {product.images && product.images.length > 0 ? (
-                        <img src={product.images[0]} alt={product.name} className="w-10 h-10 rounded-lg object-cover bg-gray-100" />
+                        <HoverImagePreview src={product.images[0]} alt={product.name} />
                       ) : (
                         <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
                           <Package className="w-4 h-4 text-gray-400" />

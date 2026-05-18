@@ -18,13 +18,13 @@ const up = async (models) => {
   const categoryCount = await Category.countDocuments();
   if (categoryCount === 0) {
     const categories = [
-      { name: 'TUTTO', slug: 'tutto', enabled: true },
-      { name: 'VESTITI', slug: 'vestiti', enabled: true },
-      { name: 'BLUSE', slug: 'bluse', enabled: true },
-      { name: 'GONNE', slug: 'gonne', enabled: true },
-      { name: 'PANTALONI', slug: 'pantaloni', enabled: true },
-      { name: 'GIACCHE', slug: 'giacche', enabled: true },
-      { name: 'ACCESSORI', slug: 'accessori', enabled: true },
+      { name: 'TUTTO', slug: 'tutto', image: '/images/products/dress-2.jpg', enabled: true },
+      { name: 'VESTITI', slug: 'vestiti', image: '/images/products/dress-1.jpg', enabled: true },
+      { name: 'BLUSE', slug: 'bluse', image: '/images/products/blouse-1.jpg', enabled: true },
+      { name: 'GONNE', slug: 'gonne', image: '/images/products/skirt-1.jpg', enabled: true },
+      { name: 'PANTALONI', slug: 'pantaloni', image: '/images/products/pants-1.jpg', enabled: true },
+      { name: 'GIACCHE', slug: 'giacche', image: '/images/products/jacket-1.jpg', enabled: true },
+      { name: 'ACCESSORI', slug: 'accessori', image: '/images/products/bag-1.jpg', enabled: true },
     ];
     await Category.insertMany(categories);
     console.log('  ✅ Categorias insertadas');

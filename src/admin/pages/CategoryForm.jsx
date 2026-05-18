@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { categoryService } from '@/admin/services/categoryService';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Upload, X } from 'lucide-react';
 
 const CategoryForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [category, setCategory] = useState({ name: '', slug: '', enabled: true });
+  const [category, setCategory] = useState({ name: '', slug: '', image: '', enabled: true });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
@@ -28,6 +28,18 @@ const CategoryForm = () => {
     setCategory(prev => ({ ...prev, name, slug: name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') }));
   };
 
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onloadend = () => setCategory(prev => ({ ...prev, image: reader.result }));
+    reader.readAsDataURL(file);
+  };
+
+  const removeImage = () => {
+    setCategory(prev => ({ ...prev, image: '' }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null); setSuccess(null);
@@ -35,7 +47,7 @@ const CategoryForm = () => {
     try {
       setLoading(true);
       if (isEditMode) { await categoryService.update(id, category); setSuccess('Categoria aggiornata'); }
-      else { await categoryService.create(category); setSuccess('Categoria creata'); setCategory({ name: '', slug: '', enabled: true }); }
+      else { await categoryService.create(category); setSuccess('Categoria creata'); setCategory({ name: '', slug: '', image: '', enabled: true }); }
     } catch (err) { setError(err.message); }
     finally { setLoading(false); }
   };
@@ -68,6 +80,27 @@ const CategoryForm = () => {
             <label className="admin-label" htmlFor="slug">Slug</label>
             <input id="slug" name="slug" type="text" value={category.slug} onChange={handleChange} required className="admin-input" placeholder="es. vestiti" />
             <p className="text-xs text-gray-400 mt-1">Generato automaticamente dal nome</p>
+          </div>
+
+          <div className="admin-form-group">
+            <label className="admin-label">Immagine</label>
+            {category.image ? (
+              <div className="relative group w-40 aspect-[3/4] rounded-lg overflow-hidden bg-gray-100">
+                <img src={category.image} alt="Preview" className="w-full h-full object-cover" />
+                <button type="button" onClick={removeImage} className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+            ) : (
+              <div className="border-2 border-dashed border-gray-200 rounded-lg p-6 text-center hover:border-gray-300 transition-colors">
+                <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" id="cat-image-upload" />
+                <label htmlFor="cat-image-upload" className="cursor-pointer">
+                  <Upload className="w-6 h-6 text-gray-300 mx-auto mb-2" />
+                  <p className="text-sm text-gray-500">Clicca per caricare un'immagine</p>
+                  <p className="text-xs text-gray-400 mt-1">PNG, JPG</p>
+                </label>
+              </div>
+            )}
           </div>
 
           <label className="flex items-center gap-3 cursor-pointer pt-2">

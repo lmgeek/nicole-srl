@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { categoryService } from '@/admin/services/categoryService';
 import { Link } from 'react-router-dom';
-import { Plus, Pencil, Trash2, Tag, AlertCircle } from 'lucide-react';
+import { Plus, Pencil, Trash2, Tag, AlertCircle, Image as ImageIcon } from 'lucide-react';
 import StatCard from '@/admin/components/StatCard';
 import EmptyState from '@/admin/components/EmptyState';
+import HoverImagePreview from '@/admin/components/HoverImagePreview';
 
 const CategoryList = () => {
   const [categories, setCategories] = useState([]);
@@ -59,6 +60,7 @@ const CategoryList = () => {
           <table className="admin-table">
             <thead>
               <tr>
+                <th>Immagine</th>
                 <th>Nome</th>
                 <th>Slug</th>
                 <th>Stato</th>
@@ -68,6 +70,15 @@ const CategoryList = () => {
             <tbody>
               {categories.map(cat => (
                 <tr key={cat._id}>
+                  <td>
+                    {cat.image ? (
+                      <HoverImagePreview src={cat.image} alt={cat.name} />
+                    ) : (
+                      <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
+                        <ImageIcon className="w-4 h-4 text-gray-400" />
+                      </div>
+                    )}
+                  </td>
                   <td>
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
