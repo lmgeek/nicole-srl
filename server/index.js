@@ -6,6 +6,8 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import runMigrations from './migrations/runner.js';
 import migrations from './migrations/index.js';
+import fs from 'fs';
+import path from 'path';
 
 dotenv.config();
 
@@ -20,6 +22,11 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
+const distPath = path.join(process.cwd(), 'dist');
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath));
+}
 
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -397,15 +404,24 @@ app.delete('/api/hero-slides/:id', authenticateToken, async (req, res) => {
   }
 });
 
+app.get('/{*path}', (req, res) => {
+  const indexPath = path.join(process.cwd(), 'dist', 'index.html');
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.status(404).json({ error: 'Not found' });
+  }
+});
+
 const startServer = async () => {
+  app.listen(PORT, () => console.log(`🚀 Servidor en http://localhost:${PORT}`));
+
   try {
     await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/nicole-trend-shop');
     console.log('✅ MongoDB conectado');
     await runMigrations(migrations, models);
-    app.listen(PORT, () => console.log(`🚀 Servidor en http://localhost:${PORT}`));
   } catch (err) {
-    console.error('❌ Error al iniciar:', err.message);
-    process.exit(1);
+    console.error('⚠️  Error MongoDB/migraciones:', err.message);
   }
 };
 

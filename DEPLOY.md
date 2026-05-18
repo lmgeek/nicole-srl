@@ -1,77 +1,80 @@
-# Deploy Automático con Portainer
+# Deploy con Portainer
 
-## Configuración inicial (una sola vez)
+## Dockerfile (producción)
 
-### 1. Portainer → Git Repository
-
-1. Portainer → **Environments** → tu entorno
-2. **Stacks** → **Add stack**
-3. Name: `nicole-srl`
-4. **Build method**: Git repository
-5. Repository URL: `https://github.com/TU_USUARIO/nicole-srl.git`
-6. Repository reference: `main` (o tu rama)
-7. Compose path: `docker-compose.yml`
-8. **Environment variables**:
-
-| Variable | Valor | Descripción |
-|---|---|---|
-| `MONGO_PASSWORD` | `TuPasswordSeguro` | Password de MongoDB |
-| `JWT_SECRET` | `clave-larga-aleatoria` | Secret para JWT tokens |
-| `VITE_API_URL` | `http://TU_IP_O_DOMINIO:3001` | URL del backend |
-
-9. ✅ **Activate webhooks** → copia el webhook URL
-10. **Deploy the stack**
-
-### 2. Configurar webhook en GitHub
+Un solo contenedor que incluye frontend + backend:
 
 ```bash
-# En GitHub → Repo → Settings → Webhooks → Add webhook
-# Payload URL: <webhook-url-de-portainer>
-# Content type: application/json
-# Events: Just the push event
+docker build --build-arg VITE_API_URL=http://TU_DOMINIO:3001 -t nicole-srl .
+docker run -d -p 3001:3001 \
+  -e MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/nicole \
+  -e JWT_SECRET=tu-clave-secreta \
+  --name nicole-srl \
+  nicole-srl
 ```
 
-## Flujo de trabajo
+## Portainer — Deploy automático con Git
+
+### 1. Configurar Stack
+
+1. Portainer → **Stacks** → **Add stack**
+2. Name: `nicole-srl`
+3. **Build method**: Git repository
+4. Repository URL: tu repo
+5. Branch: `main`
+6. **Environment variables**:
+
+| Variable | Descripción |
+|---|---|
+| `MONGODB_URI` | Connection string de MongoDB (Atlas o externo) |
+| `JWT_SECRET` | Clave secreta para tokens JWT |
+| `VITE_API_URL` | URL del servidor (ej: `http://TU_IP:3001`) |
+
+7. ✅ **Activate webhooks** → copia la URL
+8. **Deploy the stack**
+
+### 2. Webhook en GitHub
+
+GitHub → Settings → Webhooks → Add webhook:
+- Payload URL: URL del webhook de Portainer
+- Content type: `application/json`
+- Events: Just the push event
+
+### 3. MongoDB
+
+MongoDB se ejecuta **fuera** del contenedor:
+
+**MongoDB Atlas** (recomendado):
+- Configura `MONGODB_URI` con tu connection string
+
+**Contenedor separado**:
+```bash
+docker run -d --name nicole-mongo \
+  -p 27017:27017 \
+  -v mongo-data:/data/db \
+  -e MONGO_INITDB_ROOT_USERNAME=admin \
+  -e MONGO_INITDB_ROOT_PASSWORD=tu-password \
+  --restart unless-stopped \
+  mongo:7.0
+```
+
+## Desarrollo local
 
 ```bash
-# Hacer cambios
-git add .
-git commit -m "descripcion"
-git push
-
-# Portainer detecta el push via webhook → rebuild automático → deploy
+docker compose up -d --build
 ```
 
-## Verificar deploy
+- Frontend: `http://localhost:80` (Vite con hot-reload)
+- Backend: `http://localhost:3001` (nodemon)
+- Mongo Express: `http://localhost:8081`
 
-```bash
-# Logs en Portainer → nicole-server → Logs
-# O via SSH:
-docker compose logs -f server
-docker compose ps
-```
-
-## Estructura del stack
+## Estructura de archivos
 
 ```
-┌─────────────┐     ┌──────────────┐     ┌──────────────┐
-│  Frontend   │────▶│   Server     │────▶│    Mongo     │
-│  Nginx:80   │     │  Node:3001   │     │   mongo:7.0  │
-└─────────────┘     └──────────────┘     └──────────────┘
-     Puerto 80            Puerto 3001        Volumen persistente
+├── Dockerfile              # Producción (multi-stage)
+├── docker-compose.yml      # Desarrollo local
+├── Dockerfile.server.dev   # Dev server con nodemon
+├── Dockerfile.frontend.dev # Dev frontend con Vite
+├── .dockerignore           # Excluye archivos del build prod
+└── DEPLOY.md               # Esta guía
 ```
-
-- **Frontend**: Nginx Alpine, estáticos con gzip + cache
-- **Server**: Node 22 Alpine, solo deps de producción
-- **Mongo**: 7.0 con healthcheck antes de iniciar server
-
-## Variables de entorno
-
-Todas tienen valores por defecto. Para producción, configura en Portainer:
-
-| Variable | Default | Requerido |
-|---|---|---|
-| `MONGO_USER` | `admin` | No |
-| `MONGO_PASSWORD` | `Nicole2024!` | **Sí** |
-| `JWT_SECRET` | `your-super-secret-key...` | **Sí** |
-| `VITE_API_URL` | `http://localhost:3001` | **Sí** (IP/dominio real) |
