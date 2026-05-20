@@ -1,77 +1,89 @@
-# Deploy Automático con Portainer
+# Deploy en Dokploy
 
-## Configuración inicial (una sola vez)
+## Requisitos previos
 
-### 1. Portainer → Git Repository
+1. **MongoDB Atlas** - Base de datos externa (no se deploya en Dokploy)
+   - Crear cluster en [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+   - Obtener connection string: `mongodb+srv://<user>:<password>@cluster.mongodb.net/nicole-trend-shop`
+   - Whitelist `0.0.0.0/0` o la IP del servidor de Dokploy
 
-1. Portainer → **Environments** → tu entorno
-2. **Stacks** → **Add stack**
-3. Name: `nicole-srl`
-4. **Build method**: Git repository
-5. Repository URL: `https://github.com/TU_USUARIO/nicole-srl.git`
-6. Repository reference: `main` (o tu rama)
-7. Compose path: `docker-compose.yml`
-8. **Environment variables**:
+2. **Dokploy** instalado y funcionando
 
-| Variable | Valor | Descripción |
+## Deploy en Dokploy
+
+### 1. Crear aplicación en Dokploy
+
+1. Ir a **Applications** → **Create Application**
+2. Name: `nicole-srl`
+3. Source: **Git Repository**
+4. Repository URL: `https://github.com/TU_USUARIO/nicole-srl.git`
+5. Branch: `main`
+
+### 2. Configurar Docker Compose
+
+En la sección de **Docker Compose** del proyecto, usar el `docker-compose.yml` del repo.
+
+### 3. Variables de entorno
+
+Configurar en Dokploy → Application → Environment Variables:
+
+| Variable | Descripción | Ejemplo |
 |---|---|---|
-| `MONGO_PASSWORD` | `TuPasswordSeguro` | Password de MongoDB |
-| `JWT_SECRET` | `clave-larga-aleatoria` | Secret para JWT tokens |
-| `VITE_API_URL` | `http://TU_IP_O_DOMINIO:3001` | URL del backend |
+| `MONGODB_URI` | Connection string de MongoDB Atlas | `mongodb+srv://user:pass@cluster.mongodb.net/nicole-trend-shop` |
+| `JWT_SECRET` | Clave secreta para JWT tokens | `clave-larga-aleatoria-123` |
+| `VITE_API_URL` | URL del backend | `https://api.tudominio.com` |
 
-9. ✅ **Activate webhooks** → copia el webhook URL
-10. **Deploy the stack**
+### 4. Puertos
 
-### 2. Configurar webhook en GitHub
+- **Server**: exponer puerto `3001`
+- **Frontend**: exponer puerto `80`
 
-```bash
-# En GitHub → Repo → Settings → Webhooks → Add webhook
-# Payload URL: <webhook-url-de-portainer>
-# Content type: application/json
-# Events: Just the push event
+### 5. Deploy
+
+1. Click en **Deploy**
+2. Verificar logs:
+   - Server: debe mostrar `✅ MongoDB conectado` y `🚀 Servidor en http://localhost:3001`
+   - Frontend: debe iniciar nginx correctamente
+
+## Estructura del stack
+
+```
+┌─────────────┐     ┌──────────────┐     ┌──────────────────┐
+│  Frontend   │────▶│   Server     │────▶│  MongoDB Atlas   │
+│  Nginx:80   │     │  Node:3001   │     │  (externo)       │
+└─────────────┘     └──────────────┘     └──────────────────┘
+     Puerto 80            Puerto 3001        Cloud
 ```
 
-## Flujo de trabajo
+## CI/CD con Webhook
+
+1. Dokploy genera un webhook URL para la aplicación
+2. Configurar en GitHub → Repo → Settings → Webhooks:
+   - Payload URL: `<webhook-url-de-dokploy>`
+   - Content type: `application/json`
+   - Events: `Just the push event`
 
 ```bash
-# Hacer cambios
 git add .
 git commit -m "descripcion"
 git push
-
-# Portainer detecta el push via webhook → rebuild automático → deploy
+# Dokploy redeploy automático
 ```
 
 ## Verificar deploy
 
 ```bash
-# Logs en Portainer → nicole-server → Logs
-# O via SSH:
-docker compose logs -f server
-docker compose ps
+# Logs desde Dokploy dashboard
+# O via SSH al servidor:
+docker logs nicole-server
+docker logs nicole-frontend
+docker ps
 ```
 
-## Estructura del stack
+## Troubleshooting
 
-```
-┌─────────────┐     ┌──────────────┐     ┌──────────────┐
-│  Frontend   │────▶│   Server     │────▶│    Mongo     │
-│  Nginx:80   │     │  Node:3001   │     │   mongo:7.0  │
-└─────────────┘     └──────────────┘     └──────────────┘
-     Puerto 80            Puerto 3001        Volumen persistente
-```
-
-- **Frontend**: Nginx Alpine, estáticos con gzip + cache
-- **Server**: Node 22 Alpine, solo deps de producción
-- **Mongo**: 7.0 con healthcheck antes de iniciar server
-
-## Variables de entorno
-
-Todas tienen valores por defecto. Para producción, configura en Portainer:
-
-| Variable | Default | Requerido |
-|---|---|---|
-| `MONGO_USER` | `admin` | No |
-| `MONGO_PASSWORD` | `Nicole2024!` | **Sí** |
-| `JWT_SECRET` | `your-super-secret-key...` | **Sí** |
-| `VITE_API_URL` | `http://localhost:3001` | **Sí** (IP/dominio real) |
+| Problema | Solución |
+|---|---|
+| Server no conecta a MongoDB | Verificar `MONGODB_URI` y IP whitelist en Atlas |
+| Frontend no conecta al server | Verificar `VITE_API_URL` y rebuild del frontend |
+| Healthcheck falla | Esperar 30s, verificar logs del server |
