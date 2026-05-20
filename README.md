@@ -1,39 +1,51 @@
-**Welcome to your Base44 project** 
+# Nicole SRL - Proyectos
 
-**About**
-
-View and Edit  your app on [Base44.com](http://Base44.com) 
-
-This project contains everything you need to run your app locally.
-
-**Edit the code in your local development environment**
-
-Any change pushed to the repo will also be reflected in the Base44 Builder.
-
-**Prerequisites:** 
-
-1. Clone the repository using the project's Git URL 
-2. Navigate to the project directory
-3. Install dependencies: `npm install`
-4. Create an `.env.local` file and set the right environment variables
+## Estructura
 
 ```
-VITE_BASE44_APP_ID=your_app_id
-VITE_BASE44_APP_BASE_URL=your_backend_url
-
-e.g.
-VITE_BASE44_APP_ID=cbef744a8545c389ef439ea6
-VITE_BASE44_APP_BASE_URL=https://my-to-do-list-81bfaad7.base44.app
+nicole/
+├── nicole-srl-server/     # Backend API (Express + MongoDB)
+├── nicole-srl-frontend/   # Frontend (React + Vite)
+└── docker-compose.prod.yml # Deploy conjunto (producción)
 ```
 
-Run the app: `npm run dev`
+## Deploy en Portainer
 
-**Publish your changes**
+### Opción A: Stack completo (recomendado)
 
-Open [Base44.com](http://Base44.com) and click on Publish.
+1. Portainer → **Stacks** → **Add stack** → **Git Repository**
+2. Repository URL: tu repo
+3. Branch: `main`
+4. Compose path: `docker-compose.prod.yml`
+5. **Environment variables**:
 
-**Docs & Support**
+| Variable | Descripción | Ejemplo |
+|---|---|---|
+| `MONGODB_URI` | Connection string MongoDB | `mongodb+srv://user:pass@cluster.mongodb.net/nicole` |
+| `JWT_SECRET` | Clave para tokens JWT | `clave-larga-aleatoria` |
+| `VITE_API_URL` | URL del backend | `http://TU_DOMINIO:3001` |
 
-Documentation: [https://docs.base44.com/Integrations/Using-GitHub](https://docs.base44.com/Integrations/Using-GitHub)
+6. ✅ **Activate webhooks**
+7. **Deploy the stack**
 
-Support: [https://app.base44.com/support](https://app.base44.com/support)
+### Opción B: Proyectos separados
+
+Ver `nicole-srl-server/DEPLOY.md` y `nicole-srl-frontend/DEPLOY.md`
+
+## Desarrollo local
+
+### Backend
+```bash
+cd nicole-srl-server
+cp .env.example .env
+npm install
+npm run dev
+```
+
+### Frontend
+```bash
+cd nicole-srl-frontend
+cp .env.example .env
+npm install
+npm run dev
+```
