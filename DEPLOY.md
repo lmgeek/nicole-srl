@@ -1,50 +1,74 @@
-# Deploy con Portainer
+# Deploy en Dokploy
 
-## Arquitectura
+## Requisitos previos
 
-```
-┌──────────────────────────────────┐
-│         Contenedor único          │
-│  ┌──────────┐  ┌───────────────┐ │
-│  │  Nginx   │  │   Express     │ │
-│  │  Puerto  │  │   Puerto      │ │
-│  │    80    │  │    3001       │ │
-│  │(frontend)│  │  (API)        │ │
-│  └──────────┘  └───────────────┘ │
-└──────────────────────────────────┘
-```
+1. **MongoDB Atlas** - Base de datos externa (no se deploya en Dokploy)
+   - Crear cluster en [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+   - Obtener connection string: `mongodb+srv://<user>:<password>@cluster.mongodb.net/nicole-trend-shop`
+   - Whitelist `0.0.0.0/0` o la IP del servidor de Dokploy
 
-- **Nginx:80** → Frontend estático (SPA con gzip + cache)
-- **Express:3001** → API REST + MongoDB
-- **Supervisord** → Gestiona ambos procesos
+2. **Dokploy** instalado y funcionando
 
-## Portainer — Deploy automático
+## Deploy en Dokploy
 
-### 1. Configurar Application
+### 1. Crear aplicación en Dokploy
 
-1. Portainer → **Applications** → **Add application** → **Git Repository**
+1. Ir a **Applications** → **Create Application**
 2. Name: `nicole-srl`
-3. Repository URL: tu repo
-4. Branch: `main`
-5. **Dockerfile**: `Dockerfile`
-6. **Build args**: `VITE_API_URL=http://TU_DOMINIO:3001`
-7. **Environment variables**:
+3. Source: **Git Repository**
+4. Repository URL: `https://github.com/TU_USUARIO/nicole-srl.git`
+5. Branch: `main`
 
-| Variable | Descripción |
-|---|---|
-| `MONGODB_URI` | Connection string MongoDB (Atlas o externo) |
-| `JWT_SECRET` | Clave secreta JWT |
+### 2. Configurar Docker Compose
 
-8. **Publish ports**: `80` y `3001`
-9. ✅ **Activate webhooks**
-10. **Deploy**
+En la sección de **Docker Compose** del proyecto, usar el `docker-compose.yml` del repo.
 
-### 2. Webhook en GitHub
+### 3. Variables de entorno
 
-GitHub → Settings → Webhooks → Add webhook:
-- Payload URL: URL del webhook de Portainer
-- Content type: `application/json`
-- Events: Just the push event
+Configurar en Dokploy → Application → Environment Variables:
+
+| Variable | Descripción | Ejemplo |
+|---|---|---|
+| `MONGODB_URI` | Connection string de MongoDB Atlas | `mongodb+srv://user:pass@cluster.mongodb.net/nicole-trend-shop` |
+| `JWT_SECRET` | Clave secreta para JWT tokens | `clave-larga-aleatoria-123` |
+| `VITE_API_URL` | URL del backend | `https://api.tudominio.com` |
+
+### 4. Puertos
+
+- **Server**: exponer puerto `3001`
+- **Frontend**: exponer puerto `80`
+
+### 5. Deploy
+
+1. Click en **Deploy**
+2. Verificar logs:
+   - Server: debe mostrar `✅ MongoDB conectado` y `🚀 Servidor en http://localhost:3001`
+   - Frontend: debe iniciar nginx correctamente
+
+## Estructura del stack
+
+```
+┌─────────────┐     ┌──────────────┐     ┌──────────────────┐
+│  Frontend   │────▶│   Server     │────▶│  MongoDB Atlas   │
+│  Nginx:80   │     │  Node:3001   │     │  (externo)       │
+└─────────────┘     └──────────────┘     └──────────────────┘
+     Puerto 80            Puerto 3001        Cloud
+```
+
+## CI/CD con Webhook
+
+1. Dokploy genera un webhook URL para la aplicación
+2. Configurar en GitHub → Repo → Settings → Webhooks:
+   - Payload URL: `<webhook-url-de-dokploy>`
+   - Content type: `application/json`
+   - Events: `Just the push event`
+
+```bash
+git add .
+git commit -m "descripcion"
+git push
+# Dokploy redeploy automático
+```
 
 ### 3. MongoDB
 
@@ -55,34 +79,17 @@ MongoDB se ejecuta **fuera** del contenedor:
 
 **Contenedor separado**:
 ```bash
-docker run -d --name nicole-mongo \
-  -p 27017:27017 \
-  -v mongo-data:/data/db \
-  -e MONGO_INITDB_ROOT_USERNAME=admin \
-  -e MONGO_INITDB_ROOT_PASSWORD=tu-password \
-  --restart unless-stopped \
-  mongo:7.0
+# Logs desde Dokploy dashboard
+# O via SSH al servidor:
+docker logs nicole-server
+docker logs nicole-frontend
+docker ps
 ```
 
-## Desarrollo local
+## Troubleshooting
 
-```bash
-docker compose up -d --build
-```
-
-- Frontend: `http://localhost:80` (Vite hot-reload)
-- Backend: `http://localhost:3001` (nodemon)
-- Mongo Express: `http://localhost:8081`
-
-## Estructura de archivos
-
-```
-├── Dockerfile              # Producción (multi-stage + supervisord)
-├── docker-compose.yml      # Desarrollo local
-├── Dockerfile.server.dev   # Dev server con nodemon
-├── Dockerfile.frontend.dev # Dev frontend con Vite
-├── nginx.conf              # Config Nginx producción
-├── supervisord.conf        # Gestor de procesos (nginx + server)
-├── .dockerignore           # Excluye archivos del build
-└── DEPLOY.md               # Esta guía
-```
+| Problema | Solución |
+|---|---|
+| Server no conecta a MongoDB | Verificar `MONGODB_URI` y IP whitelist en Atlas |
+| Frontend no conecta al server | Verificar `VITE_API_URL` y rebuild del frontend |
+| Healthcheck falla | Esperar 30s, verificar logs del server |

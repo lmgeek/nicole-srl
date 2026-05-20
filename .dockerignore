@@ -12,7 +12,5 @@ npm-debug.log
 AGENTS.md
 .opencode
 .agents
-dist
-docker-compose.yml
-Dockerfile.server.dev
-Dockerfile.frontend.dev
+docker-compose.dev.yml
+skills-lock.json
